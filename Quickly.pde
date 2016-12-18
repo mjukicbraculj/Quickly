@@ -1,16 +1,25 @@
-import controlP5.*;
-Drawer drawer;
-ControlP5 controls;
-Button forwardBtn, backBtn;
+import controlP5.*;    //library for adding controls
+Drawer drawer;        // class for drawing text
+ControlP5 controls;    //for adding controls
+Button forwardBtn, backBtn;    
 Textfield numberOfPlayersTF;
-Textfield[] playersNamesAndKeys;
+Textfield[] playersNamesAndKeys;    
 PImage[] headingImg;
-
+PShape[] Btns;
+int[] correspondingBtn;    //red, green or blue button
+float[] pressBtnPositionsX;
+float pressBtnPositionY;
+float pressBtnWidth;
+float pressBtnHeight;
+Player[] players;
 boolean wellcomeScreen;
 boolean setupScreen;
+boolean playGameScreen;
 int maxPlayersNum = 10;
-int minPlayersNum = 1;
-int numberOfPlayers;
+int minPlayersNum = 1;    //1 or 2?
+int numberOfPlayers;    
+String error;
+HittingObjects game;
 
 void setup()
 {
@@ -20,23 +29,45 @@ void setup()
   controls = new ControlP5(this);
   wellcomeScreen = true;
   setupScreen = false;
+  playGameScreen = false;
   headingImg = new PImage[7];
   loadImages();
   addControls();
   wellcomeScreenControls(true);
+  addTextfields();
+  Btns = new PShape[3];
+  Btns[0] = loadShape("images/pressButton1.svg");
+  Btns[1] = loadShape("images/hitButton1.svg");
+  Btns[2] = loadShape("images/failureButton1.svg");
+  game = new HittingObjects();
+  error = "";
 }
 
 void draw()
 {
-  background(100, 100, 100);
+  background(150, 150, 150);
   if(wellcomeScreen)
   {
     drawHeading();
     drawer.drawText("Please, enter number of players...", 25, color(0, 0, 0), width*0.95/2, height/2);
+    drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
   }
   else if(setupScreen)
   {
     drawer.drawText("Please, enter players names and key controls...", 25, color(0, 0, 0), width*0.95/2, height/6);
+    drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
+  }
+  else if(playGameScreen)
+  {
+    for(int i = 0; i < numberOfPlayers; ++i)
+    {
+      shape(Btns[correspondingBtn[i]], pressBtnPositionsX[i], pressBtnPositionY, pressBtnWidth, 100);
+      drawer.drawText(players[i].name, 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+50);
+      drawer.drawText(Integer.toString(players[i].score), 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+80);
+    } 
+    game.drawState();
+    if(game.endOfGame())
+      game = new HittingObjects();
   }
     
 }
@@ -68,11 +99,11 @@ void addControls()
   
 }
 
-void addDynamicTextfields()
+void addTextfields()
 {
-  playersNamesAndKeys = new Textfield[numberOfPlayers*2];
+  playersNamesAndKeys = new Textfield[maxPlayersNum*2];
   float pomak = (height/1.4 -height/5)/10;
-  for(int i = 0; i < numberOfPlayers*2; i+=2)
+  for(int i = 0; i < maxPlayersNum*2; i+=2)
   {
     playersNamesAndKeys[i] = controls.addTextfield("Player"+i/2)
                                      .setSize(width/10, height/30)
@@ -159,17 +190,53 @@ public void forwardBtnClick()
 {
   if(wellcomeScreen)
   {
-    wellcomeScreen = false;
-    wellcomeScreenControls(false);
-    setupScreen = true;
-    numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
-    addDynamicTextfields();
-    setupScreenControls(true);
+    try
+    {
+      numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
+      error = "";
+      wellcomeScreen = false;
+      wellcomeScreenControls(false);
+      setupScreen = true;
+      players = new Player[numberOfPlayers];
+      setPressBtnPositions();
+      setupScreenControls(true);
+    }
+    catch(Exception e)
+    {
+      error = "Have to write number of players first!";
+    }
+    
   }
   else
   {
-    //kada odemo na play
+    for(int i = 0; i < numberOfPlayers; ++i)
+      if(playersNamesAndKeys[i*2+1].getText().equals(""))
+       {
+         error = "All players have to select key for playing...!";
+         return;
+       }
+    error = "";
+    setupScreen = false;
+    setupScreenControls(false);
+    playGameScreen = true;
+    for(int i = 0; i < numberOfPlayers; i++)
+      players[i] = new Player(playersNamesAndKeys[i*2].getText(), 
+                Integer.parseInt(playersNamesAndKeys[i*2+1].getText()));
+    correspondingBtn = new int[numberOfPlayers];
+    for(int i = 0; i < numberOfPlayers; ++i)
+      correspondingBtn[i] = 0;
   }
+}
+
+public void setPressBtnPositions()
+{
+  pressBtnPositionsX = new float[numberOfPlayers];
+  int diff = 50;
+  pressBtnHeight = height/30;
+  pressBtnWidth = (width*0.95 - (numberOfPlayers+1)*diff)/numberOfPlayers;
+  for(int i = 0; i < numberOfPlayers; ++i)
+    pressBtnPositionsX[i] = (i+1)*diff+i*pressBtnWidth;
+  pressBtnPositionY = 6*height/7;
 }
 
 //if on the cesond screen goes to first
@@ -192,4 +259,59 @@ void mousePressed()
   for(int i = 0; i < numberOfPlayers * 2; i+=2)
       if(playersNamesAndKeys[i].isFocus() && playersNamesAndKeys[i].getText().equals("Name"+i/2))
          playersNamesAndKeys[i].setText("");
+}
+
+int textFiledInFocus() 
+{
+    for (int i = 1; i < numberOfPlayers*2; i+=2)
+      if (playersNamesAndKeys[i].isFocus())
+        return i;
+    return -1;
+}
+
+void keyReleased() 
+{
+  if(setupScreen)
+  {
+    int index = textFiledInFocus();
+    if (index >= 0) {
+      //playersNamesAndKeys[index].setText(playersNamesAndKeys[index].getText() + " (" +
+      //                                            Integer.toString(keyCode) + ")");
+      playersNamesAndKeys[index].setText(Integer.toString(keyCode));                                 
+    }
+  }
+  else if(playGameScreen)
+  {
+    for(int i = 0; i < numberOfPlayers; ++i)
+    {
+      if(players[i].myKey == keyCode)
+        correspondingBtn[i] = 0;
+    }
+  }
+}
+
+void keyPressed()
+{
+  if(playGameScreen)
+  {
+    for(int i = 0; i < numberOfPlayers; ++i)
+    {
+      if(players[i].myKey == keyCode)
+      {
+        int tmp = game.score();
+        if(tmp == -1)
+        {
+          correspondingBtn[i] = 2;
+          players[i].score -= 1;
+        }
+        else if(tmp == 1)
+        {
+          correspondingBtn[i] = 1;
+          players[i].score += 1;
+        }
+        else
+          correspondingBtn[i] = 0;
+      }
+    }
+  }
 }
