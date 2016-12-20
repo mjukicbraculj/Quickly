@@ -42,7 +42,7 @@ void setup()
   Btns[0] = loadShape("images/pressButton1.svg");
   Btns[1] = loadShape("images/hitButton1.svg");
   Btns[2] = loadShape("images/failureButton1.svg");
-  games = new Game[2];
+  games = new Game[3];
   currentGame = 0;
   error = "";
   
@@ -77,7 +77,7 @@ void draw()
     if(games[currentGame].endOfGame())
     {
       ++currentGame;
-      if(currentGame > 1)
+      if(currentGame > games.length - 1)
         exit();
     }
   }
@@ -198,8 +198,9 @@ public void setupScreenControls(boolean visible)
 
 public void createGames()
 {
-  games[0] = new HittingObjects(10, numberOfPlayers);
+  games[0] = new HittingObjects(10, numberOfPlayers, false);
   games[1] = new WhiteScreen(10, numberOfPlayers);
+  games[2] = new HittingObjects(10, numberOfPlayers, true);
 }
 
 //method hides first screen and drows second(setup)

@@ -6,6 +6,7 @@ class HittingObjects extends Game
   String gameName;
   float imageWidth, imageHeight;
   Colors c;
+  boolean hidden;
 
   class Iteration
   {
@@ -52,7 +53,7 @@ class HittingObjects extends Game
     }
   }
   
-  public HittingObjects(int numberOfRounds, int numberOfPlayers)
+  public HittingObjects(int numberOfRounds, int numberOfPlayers, boolean hidden)
   {
     super(numberOfRounds, numberOfPlayers);
     gameOver = false;
@@ -64,21 +65,34 @@ class HittingObjects extends Game
       iterations[i] = new Iteration();
     currentIteration = 0;
     gameName = "HittingObjecs";
+    this.hidden = hidden;
   }
   
   public boolean drawState()
   {
-    fill(iterations[currentIteration].c1); 
+    boolean visible = false;
+    if(iterations[currentIteration].object2.getX() - iterations[currentIteration].object1.getX() > width*0.3
+            || !hidden || iterations[currentIteration].score == 0)
+      visible = true;
+    if(visible)
+    {
+      fill(iterations[currentIteration].c1);
+      iterations[currentIteration].object1.draw();
+    }
     iterations[currentIteration].object1.translate(iterations[currentIteration].increment1, 0);
-    iterations[currentIteration].object1.draw();
-    fill(iterations[currentIteration].c2); 
+      
+    if(visible) 
+    {
+      fill(iterations[currentIteration].c2); 
+      iterations[currentIteration].object2.draw();
+    }
     iterations[currentIteration].object2.translate(-iterations[currentIteration].increment2, 0);
-    iterations[currentIteration].object2.draw();
+    
     
     if(iterations[currentIteration].object1.getX() - imageWidth > iterations[currentIteration].object2.getX())
     {
       currentIteration++;
-      if(currentIteration > numberOfRounds)
+      if(currentIteration > numberOfRounds-1)
         gameOver = true;
     }
     return true;
