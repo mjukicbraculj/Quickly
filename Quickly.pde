@@ -1,4 +1,5 @@
 import controlP5.*;    //library for adding controls
+import geomerative.*;    //library used in HittingObjects game
 Drawer drawer;        // class for drawing text
 ControlP5 controls;    //for adding controls
 Button forwardBtn, backBtn;    
@@ -20,11 +21,12 @@ int minPlayersNum = 1;    //1 or 2?
 int numberOfPlayers;    
 String error;
 HittingObjects game;
-//Games[] games;
-
+Game[] games;
+int currentGame;
 void setup()
 {
   fullScreen();
+  frameRate(60);
   //size(1500, 1000);
   drawer = new Drawer();
   controls = new ControlP5(this);
@@ -40,8 +42,13 @@ void setup()
   Btns[0] = loadShape("images/pressButton1.svg");
   Btns[1] = loadShape("images/hitButton1.svg");
   Btns[2] = loadShape("images/failureButton1.svg");
-  game = new HittingObjects();
+  games = new Game[2];
+  currentGame = 0;
   error = "";
+  
+  //for HittingObject game
+  RG.init(this);
+ 
 }
 
 void draw()
@@ -66,9 +73,13 @@ void draw()
       drawer.drawText(players[i].name, 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+50);
       drawer.drawText(Integer.toString(players[i].score), 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+80);
     } 
-    game.drawState();
-    if(game.endOfGame())
-      game = new HittingObjects();
+    games[currentGame].drawState();
+    if(games[currentGame].endOfGame())
+    {
+      ++currentGame;
+      if(currentGame > 1)
+        exit();
+    }
   }
     
 }
@@ -185,6 +196,12 @@ public void setupScreenControls(boolean visible)
   }
 }
 
+public void createGames()
+{
+  games[0] = new HittingObjects(10, numberOfPlayers);
+  games[1] = new WhiteScreen(10, numberOfPlayers);
+}
+
 //method hides first screen and drows second(setup)
 //or hides second and drows third(playing)
 public void forwardBtnClick()
@@ -194,6 +211,7 @@ public void forwardBtnClick()
     try
     {
       numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
+      createGames();
       error = "";
       wellcomeScreen = false;
       wellcomeScreenControls(false);
@@ -299,7 +317,7 @@ void keyPressed()
     {
       if(players[i].myKey == keyCode)
       {
-        int tmp = game.score();
+        int tmp = games[currentGame].score(i);
         if(tmp == -1)
         {
           correspondingBtn[i] = 2;
