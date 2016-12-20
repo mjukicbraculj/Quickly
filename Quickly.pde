@@ -20,6 +20,7 @@ int minPlayersNum = 1;    //1 or 2?
 int numberOfPlayers;    
 String error;
 HittingObjects game;
+//Games[] games;
 
 void setup()
 {
