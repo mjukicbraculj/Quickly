@@ -1,6 +1,5 @@
 class WhiteScreen extends Game
 {
-  
   int roundNumber;
   boolean gameOver;
   boolean afterWhiteScreen;
