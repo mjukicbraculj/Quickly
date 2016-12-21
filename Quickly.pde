@@ -73,6 +73,10 @@ void draw()
       drawer.drawText(players[i].name, 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+50);
       drawer.drawText(Integer.toString(players[i].score), 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+80);
     } 
+    /*for(int i = 0; i < numberOfPlayers; ++i)
+      if (correspondingBtn[i] == 1)
+        delay(500);*/
+        
     games[currentGame].drawState();
     if(games[currentGame].endOfGame())
     {
@@ -198,7 +202,7 @@ public void setupScreenControls(boolean visible)
 
 public void createGames()
 {
-  games[0] = new HittingObjects(10, numberOfPlayers, false);
+  games[0] = new Equation(10, numberOfPlayers);
   games[1] = new WhiteScreen(10, numberOfPlayers);
   games[2] = new HittingObjects(10, numberOfPlayers, true);
 }
