@@ -2,11 +2,11 @@ abstract class Game
 {
   // Number of iteration each game will be played.
   int numberOfRounds;
-  // Number of players playing game, needed for array scoreForPlayer. 
+  // Number of players playing game, needed for array scoreForPlayer.
   int numberOfPlayers;
-  // Number of score each player achieved durring game (could be negative).
+  // Number of score each player achieved during game (could be negative).
   int[] scoreForPlayers;
-  
+
   public Game(int numberOfRounds, int numberOfPlayers)
   {
     this.numberOfRounds = numberOfRounds;
@@ -20,7 +20,7 @@ abstract class Game
   }
 
   /**
-   * Claculate if player pressed button on right time, 
+   * Calculate if player pressed button on right time, 
    * and depending on that return -1,0 or 1.
    * @param player Number of player in list of all players.
    * @return -1 if player clicked button in wrong time,
@@ -39,6 +39,6 @@ abstract class Game
    * @return Boolean false if some error happened, else true.
    */
   public abstract boolean drawState();
-  
-  
+
+
 }
