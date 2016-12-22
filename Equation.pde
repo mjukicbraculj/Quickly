@@ -1,144 +1,76 @@
-class Equation extends Game
+class Equation extends TrueFalseAbstract
 {
-  int fontSize = 30;
-  int roundNumber;
-  boolean gameOver;
-  boolean startPlaying;
-  int passedFrames;
-  int numberOfFramesBeforeEndRound;
-  
-  String[] operations;
-  int[] firstNumbers;
-  int[] secondNumbers;
-  int[] results;
-  boolean[] solutions;
-  
-  public void initializeEquations()
-  {
-    operations = new String[numberOfRounds];
-    firstNumbers = new int[numberOfRounds];
-    secondNumbers = new int[numberOfRounds];
-    results = new int[numberOfRounds];
-    solutions = new boolean[numberOfRounds];
-    int range = 4;
-    for (int i=0; i<numberOfRounds; i++)
-    {
-      if(i%3 == 0)
-      {
-        operations[i] = "+";
-        firstNumbers[i] = int(random(3,47));
-        secondNumbers[i] = int(random(3,48));
-        if(random(0,1) > 0.5)
-          results[i] = firstNumbers[i] + secondNumbers[i];
-        else
-        results[i] = int(random(firstNumbers[i] + secondNumbers[i] + range, firstNumbers[i] + secondNumbers[i] + range));
-        solutions[i] = (firstNumbers[i] + secondNumbers[i] == results[i]);
-      }
-      else if(i%3 == 1)
-      {
-        operations[i] = "-";
-        firstNumbers[i] = int(random(3,47));
-        secondNumbers[i] = int(random(3,48));
-        if(random(0,1) > 0.5)
-          results[i] = firstNumbers[i] - secondNumbers[i];
-        else
-          results[i] = int(random(firstNumbers[i] - secondNumbers[i] + range, firstNumbers[i] - secondNumbers[i] + range));
-        solutions[i] = (firstNumbers[i] - secondNumbers[i] == results[i]);
-      }
-      else if(i%3 == 2)
-      {
-        operations[i] = "*";
-        firstNumbers[i] = int(random(3,13));
-        secondNumbers[i] = int(random(3,13));
-        if(random(0,1) > 0.5)
-          results[i] = firstNumbers[i] * secondNumbers[i];
-        else
-          results[i] = int(random(firstNumbers[i] * secondNumbers[i] + range, firstNumbers[i] * secondNumbers[i] + range));
-        solutions[i] = (firstNumbers[i] * secondNumbers[i] == results[i]);
-      }
-      
-     }
-  }
-  
-  public Equation(int numberOfRounds, int numberOfPlayers)
-  {
-    super(numberOfRounds, numberOfPlayers);
-    roundNumber = 0;
-    gameOver = false;
-    startPlaying = false;
-    passedFrames = 0;
-    numberOfFramesBeforeEndRound = int(frameRate * 5);
-    initializeEquations();
-  }
-  
-  
-  public boolean endRound()
-  {
-    startPlaying = false;
-    passedFrames = 0;
-    roundNumber++;
-    if(roundNumber == numberOfRounds)
-      gameOver = true;
 
-    return true;
-  }
-  
-  
-  public int score(int player)
+  int gameFontSize = 25;
+  String equation;
+  boolean result;
+
+  public boolean initializeRound()
   {
-    // If round hasn't started or is over, or game is over nothing happens.
-    if(startPlaying == false || gameOver)
-      return 0;
-    
-    // If round is active and white screen havent appered.
-    if(solutions[roundNumber] == false)
-    { 
-      scoreForPlayers[player]--;
-      return -1;
+
+    int firstNumber;
+    int secondNumber;
+    int solution;
+    int range = 4;
+
+    // If int is less then 1 we make addition equation, between 1 and 2 subtraction,
+    // and more then 2 multiplication.
+    float operation = random(0,3);
+
+    if(operation < 1)
+    {
+      firstNumber = int(random(3,47));
+      secondNumber = int(random(3,48));
+      if(random(0,1) > 0.5)
+        solution = firstNumber + secondNumber;
+      else
+        solution = int(random(firstNumber + secondNumber - range, firstNumber + secondNumber + range));
+      result = (firstNumber + secondNumber == solution);
+      equation = str(firstNumber) + " + " + str(secondNumber) + " = " + str(result);
+    }
+    else if(operation < 2)
+    {
+      firstNumber = int(random(3,47));
+      secondNumber = int(random(3,48));
+      if(random(0,1) > 0.5)
+        solution = firstNumber - secondNumber;
+      else
+        solution = int(random(firstNumber - secondNumber - range, firstNumber - secondNumber + range));
+      result = (firstNumber - secondNumber == solution);
+      equation = str(firstNumber) + " - " + str(secondNumber) + " = " + str(result);
     }
     else
     {
-      endRound();
-      scoreForPlayers[player]++; 
-      return 1;
+      firstNumber = int(random(3,13));
+      secondNumber = int(random(3,13));
+      if(random(0,1) > 0.5)
+        solution = firstNumber * secondNumber;
+      else
+        solution = int(random(firstNumber * secondNumber - range, firstNumber * secondNumber + range));
+      result = (firstNumber * secondNumber == solution);
+      equation = str(firstNumber) + " * " + str(secondNumber) + " = " + str(result);
     }
+
+    return true;
+
   }
-  
-  public boolean drawEquation()
+
+  public Equation(int numberOfRounds, int numberOfPlayers)
   {
-    String wholeEquation;
-    Drawer drawer = new Drawer();     
-    wholeEquation = str(firstNumbers[roundNumber]) + operations[roundNumber] + str(secondNumbers[roundNumber]) + " = " + str(results[roundNumber]);
-    drawer.drawText(wholeEquation, fontSize, 0, width/2, height/2);
+    super("Equation", "Click if given equation is true.", 5, numberOfRounds, numberOfPlayers);
+  }
+
+  public boolean checkSolution()
+  {
+    return result;
+  }
+
+
+  public boolean drawCurrentRound()
+  {
+    Drawer drawer = new Drawer();
+    drawer.drawText(equation, gameFontSize, 0, width/2, height/2);
     return true;
   }
 
-  public boolean drawState()
-  {
-    passedFrames++;
-    
-    if(passedFrames > numberOfFramesBeforeEndRound)
-      return endRound();
-    
-    if(gameOver)
-      return false;
-      
-    if(passedFrames > 30 && startPlaying == false)
-      startPlaying = true;    
-    
-    
-    if(startPlaying)
-      return drawEquation();
-    
-    
-    return true;
-  }
-  
-
-  
-  public boolean endOfGame()
-  {
-    return gameOver;
-  }  
-  
 }

@@ -14,7 +14,7 @@ class HittingObjects extends Game
     public int score;
     RShape object1, object2;
     color c1, c2;
-    
+
     public Iteration()
     {
       this.increment1 = random(3, 5);
@@ -25,7 +25,7 @@ class HittingObjects extends Game
       c1 = c.getRandomColor();
       c2 = c.getRandomColor();
     }
-    
+
     RShape createRandomShape(float x)
     {
       RShape object;
@@ -52,10 +52,10 @@ class HittingObjects extends Game
       return object;
     }
   }
-  
+
   public HittingObjects(int numberOfRounds, int numberOfPlayers, boolean hidden)
   {
-    super(numberOfRounds, numberOfPlayers);
+    super("MIRA IZABERI IME", "Click when objects collide.", numberOfRounds, numberOfPlayers);
     gameOver = false;
     imageWidth = 0.1*width;
     imageHeight = 0.1*width;
@@ -67,7 +67,7 @@ class HittingObjects extends Game
     gameName = "HittingObjecs";
     this.hidden = hidden;
   }
-  
+
   public boolean drawState()
   {
     boolean visible = false;
@@ -80,15 +80,15 @@ class HittingObjects extends Game
       iterations[currentIteration].object1.draw();
     }
     iterations[currentIteration].object1.translate(iterations[currentIteration].increment1, 0);
-      
-    if(visible) 
+
+    if(visible)
     {
-      fill(iterations[currentIteration].c2); 
+      fill(iterations[currentIteration].c2);
       iterations[currentIteration].object2.draw();
     }
     iterations[currentIteration].object2.translate(-iterations[currentIteration].increment2, 0);
-    
-    
+
+
     if(iterations[currentIteration].object1.getX() - imageWidth > iterations[currentIteration].object2.getX())
     {
       currentIteration++;
@@ -97,15 +97,15 @@ class HittingObjects extends Game
     }
     return true;
   }
-  
+
   public boolean endOfGame()
   {
     return gameOver;
   }
-  
+
   //returns 1 if right timing
   //returns -1 if it's not
-  //returns 0 if someone was faser and won in current iteration 
+  //returns 0 if someone was faser and won in current iteration
   //or when new iteration is just started
   public int score(int player)
   {
@@ -119,7 +119,7 @@ class HittingObjects extends Game
     }
     else if(iterations[currentIteration].object2.getX() - iterations[currentIteration].object1.getX() > 0.5 * width)
       return 0;
-    else 
+    else
       return -1;
   }
 }
