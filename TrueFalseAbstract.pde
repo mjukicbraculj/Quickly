@@ -1,3 +1,9 @@
+/**
+ * Abstraction for creating games. Each game that want to inherite this class
+ * needs to implemet 3 functions characteristic for those games.
+ * This class take care of waiting before round starts, end round and
+ * users clicks.
+ */
 abstract class TrueFalseAbstract extends Game
 {
 
