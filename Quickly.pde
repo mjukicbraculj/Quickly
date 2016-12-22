@@ -20,7 +20,6 @@ int maxPlayersNum = 10;
 int minPlayersNum = 1;    //1 or 2?
 int numberOfPlayers;    
 String error;
-HittingObjects game;
 Game[] games;
 int currentGame;
 void setup()
