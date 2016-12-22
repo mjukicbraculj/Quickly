@@ -1,4 +1,4 @@
-class WhiteScreen extends TrueFalseAbstract
+class WhiteScreen extends Game
 {
   boolean afterWhiteScreen;
   int numberOfFramesBeforeWhite;

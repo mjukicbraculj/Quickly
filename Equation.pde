@@ -1,4 +1,4 @@
-class Equation extends TrueFalseAbstract
+class Equation extends Game
 {
 
   int gameFontSize = 25;

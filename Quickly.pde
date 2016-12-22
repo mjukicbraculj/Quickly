@@ -201,9 +201,13 @@ public void setupScreenControls(boolean visible)
 
 public void createGames()
 {
-  games[0] = new Equation(10, numberOfPlayers);
-  games[1] = new WhiteScreen(10, numberOfPlayers);
-  games[2] = new HittingObjects(10, numberOfPlayers, true);
+
+  println("crategamwe");
+  games[0] = new HittingObjects(10, numberOfPlayers, true);
+  println("crategamwe222");
+  games[1] = new Equation(10, numberOfPlayers);
+  games[2] = new WhiteScreen(10, numberOfPlayers);
+  //games[2] = new WhiteScreen(10, numberOfPlayers);
 }
 
 //method hides first screen and drows second(setup)
