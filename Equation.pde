@@ -26,7 +26,7 @@ class Equation extends TrueFalseAbstract
       else
         solution = int(random(firstNumber + secondNumber - range, firstNumber + secondNumber + range));
       result = (firstNumber + secondNumber == solution);
-      equation = str(firstNumber) + " + " + str(secondNumber) + " = " + str(result);
+      equation = str(firstNumber) + " + " + str(secondNumber) + " = " + str(solution);
     }
     else if(operation < 2)
     {
@@ -37,7 +37,7 @@ class Equation extends TrueFalseAbstract
       else
         solution = int(random(firstNumber - secondNumber - range, firstNumber - secondNumber + range));
       result = (firstNumber - secondNumber == solution);
-      equation = str(firstNumber) + " - " + str(secondNumber) + " = " + str(result);
+      equation = str(firstNumber) + " - " + str(secondNumber) + " = " + str(solution);
     }
     else
     {
@@ -48,7 +48,7 @@ class Equation extends TrueFalseAbstract
       else
         solution = int(random(firstNumber * secondNumber - range, firstNumber * secondNumber + range));
       result = (firstNumber * secondNumber == solution);
-      equation = str(firstNumber) + " * " + str(secondNumber) + " = " + str(result);
+      equation = str(firstNumber) + " * " + str(secondNumber) + " = " + str(solution);
     }
 
     return true;
