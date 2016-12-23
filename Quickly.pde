@@ -2,7 +2,7 @@ import controlP5.*;    //library for adding controls
 import geomerative.*;    //library used in HittingObjects game
 Drawer drawer;        // class for drawing text
 ControlP5 controls;    //for adding controls
-Button forwardBtn, backBtn;    
+Button forwardBtn, backBtn, homeBtn, newGameBtn;    
 Textfield numberOfPlayersTF;
 Textfield[] playersNamesAndKeys;    
 PImage[] headingImg;
@@ -16,6 +16,7 @@ Player[] players;
 boolean wellcomeScreen;
 boolean setupScreen;
 boolean playGameScreen;
+boolean endOfGameScreen;
 int maxPlayersNum = 10;
 int minPlayersNum = 1;    //1 or 2?
 int numberOfPlayers;    
@@ -32,6 +33,7 @@ void setup()
   wellcomeScreen = true;
   setupScreen = false;
   playGameScreen = false;
+  endOfGameScreen = false;
   headingImg = new PImage[7];
   loadImages();
   addControls();
@@ -42,9 +44,7 @@ void setup()
   Btns[1] = loadShape("images/hitButton1.svg");
   Btns[2] = loadShape("images/failureButton1.svg");
   games = new Game[3];
-  currentGame = 0;
   error = "";
-  
   //for HittingObject game
   RG.init(this);
  
@@ -67,6 +67,7 @@ void draw()
   }
   else if(playGameScreen)
   {
+    drawer.drawText(games[currentGame].helpMessage, 25, color(255, 0, 0), width*0.95/2, height/6);
     for(int i = 0; i < numberOfPlayers; ++i)
     {
       shape(Btns[correspondingBtn[i]], pressBtnPositionsX[i], pressBtnPositionY, pressBtnWidth, 100);
@@ -82,11 +83,31 @@ void draw()
     {
       ++currentGame;
       if(currentGame > games.length - 1)
-        exit();
+      {
+        playGameScreen = false;
+        endOfGameScreen = true;
+      }
     }
+  }
+  else if(endOfGameScreen)
+  {
+    for(int i = 0; i < numberOfPlayers; ++i)
+      drawer.drawText(players[i].name + " ----> " + players[i].score, 
+                                      20, color(0, 0, 0), width*0.95/2, (height/1.4 -height/5)/10*i + height/5);
+    endOfGameScreenControls(true);
   }
     
 }
+
+//initialisation of games
+//called when number of players is known
+public void createGames()
+{
+  games[1] = new Equation(2, numberOfPlayers);
+  games[0] = new WhiteScreen(2, numberOfPlayers);
+  games[2] = new HittingObjects(2, numberOfPlayers, false);
+}
+
 
 //adds buttons, textFields and all other controls...
 void addControls()
@@ -100,7 +121,15 @@ void addControls()
                     .setSize(width/15, height/15)
                     .setPosition(width*0.95/2 - 500, height/1.3)
                     .setImage(loadImage("images/back.png"), Controller.DEFAULT)
-                    .setVisible(false);                 
+                    .setVisible(false);  
+  newGameBtn = controls.addButton("newGame")
+                       .setSize(width/15, height/15)
+                       .setPosition(width*0.95/2 - 200 - width/15 , 4*height/5)
+                       .setVisible(false);
+  homeBtn = controls.addButton("home")
+                       .setSize(width/15, height/15)
+                       .setPosition(width*0.95/2 + 200, 4*height/5)
+                       .setVisible(false);
   numberOfPlayersTF = controls.addTextfield("")
                                .setSize(width/15, height/20)
                                .setPosition(width*0.95/2 - width/30, height/1.8)
@@ -176,9 +205,30 @@ void controlEvent(ControlEvent theEvent)
     forwardBtnClick();
   else if(theEvent.getName().equals("back"))
     backBtnClick();
-  
+  else if(theEvent.getName().equals("home"))
+    homeBtnClick();
+  else if(theEvent.getName().equals("newGame"))
+    newGameBtnClick();
 }
 
+public void newGameBtnClick()
+{
+  playGameScreen = true;
+  for(int i = 0; i < numberOfPlayers; ++i)
+    players[i].score = 0;
+  for(int i = 0; i < numberOfPlayers; ++i)
+      correspondingBtn[i] = 0;
+  createGames(); 
+  currentGame = 0;
+  endOfGameScreenControls(false);
+}
+
+public void homeBtnClick()
+{
+  wellcomeScreen = true;
+  wellcomeScreenControls(true);
+  endOfGameScreenControls(false);
+}
 public void wellcomeScreenControls(boolean visible)
 {
   forwardBtn.setVisible(visible);
@@ -204,14 +254,18 @@ public void setupScreenControls(boolean visible)
   }
 }
 
-//initialisation of games
-//called when number of players is known
-public void createGames()
+public void endOfGameScreenControls(boolean visible)
 {
-  games[0] = new HittingObjects(5, numberOfPlayers, false);
-  games[1] = new Equation(5, numberOfPlayers);
-  games[2] = new WhiteScreen(5, numberOfPlayers);
+  homeBtn.setVisible(visible);
+  newGameBtn.setVisible(visible);
+  if(!visible)
+  {
+    homeBtn.hide();
+    newGameBtn.hide();
+  }
 }
+
+
 
 //method hides first screen and drows second(setup)
 //or hides second and drows third(playing)
@@ -261,6 +315,7 @@ public void forwardBtnClick()
     correspondingBtn = new int[numberOfPlayers];
     for(int i = 0; i < numberOfPlayers; ++i)
       correspondingBtn[i] = 0;
+    currentGame = 0;
   }
 }
 
