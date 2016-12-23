@@ -1,6 +1,5 @@
 class HittingObjects extends Game
 {
-  float imageWidth, imageHeight;
   boolean hidden;
 
   public float increment1, increment2;
@@ -22,6 +21,8 @@ class HittingObjects extends Game
 
   RShape createRandomShape(float x)
   {
+    float imageWidth = 0.1*width;
+    float imageHeight = 0.1*width;
     RShape object;
     switch((int)random(0, 5))
     {
@@ -49,10 +50,7 @@ class HittingObjects extends Game
 
   public HittingObjects(int numberOfRounds, int numberOfPlayers, boolean hidden)
   {
-    super("MIRA IZABERI IME", "Click when objects collide.", 8, numberOfRounds, numberOfPlayers);
-
-    imageWidth = 0.1*width;
-    imageHeight = 0.1*width;
+    super("HittingObjects Game", "Click when objects collide.", 8, numberOfRounds, numberOfPlayers);
     this.hidden = hidden;
   }
 

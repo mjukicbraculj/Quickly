@@ -50,6 +50,7 @@ void setup()
  
 }
 
+
 void draw()
 {
   background(150, 150, 150);
@@ -106,7 +107,8 @@ void addControls()
                                .setColorBackground(color(255, 255, 255))
                                .setFont(drawer.getControlFont(30))
                                .setColorValueLabel(color(0, 0, 0))
-                               .setVisible(false);
+                               .setVisible(false)
+                               .setColorCursor(color(255, 255, 255));
                                
   numberOfPlayersTF.getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
   
@@ -114,6 +116,7 @@ void addControls()
   
 }
 
+//adds textfields for entering players names and keys
 void addTextfields()
 {
   playersNamesAndKeys = new Textfield[maxPlayersNum*2];
@@ -144,6 +147,8 @@ void addTextfields()
     playersNamesAndKeys[i+1].getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
   }
 }
+
+//draws images for creating heading
 void drawHeading()
 {
   /////!!0.95 FIX!!why!
@@ -199,15 +204,13 @@ public void setupScreenControls(boolean visible)
   }
 }
 
+//initialisation of games
+//called when number of players is known
 public void createGames()
 {
-
-  println("crategamwe");
-  games[0] = new HittingObjects(10, numberOfPlayers, true);
-  println("crategamwe222");
-  games[1] = new Equation(10, numberOfPlayers);
-  games[2] = new WhiteScreen(10, numberOfPlayers);
-  //games[2] = new WhiteScreen(10, numberOfPlayers);
+  games[0] = new HittingObjects(5, numberOfPlayers, false);
+  games[1] = new Equation(5, numberOfPlayers);
+  games[2] = new WhiteScreen(5, numberOfPlayers);
 }
 
 //method hides first screen and drows second(setup)
@@ -219,6 +222,12 @@ public void forwardBtnClick()
     try
     {
       numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
+      if(numberOfPlayers < 0 || numberOfPlayers > 10)
+      {
+        numberOfPlayers = 0;
+        error = "Number of players must be between 1 and 10";
+        return;
+      }
       createGames();
       error = "";
       wellcomeScreen = false;
@@ -255,6 +264,8 @@ public void forwardBtnClick()
   }
 }
 
+//called when number of players is known
+//calculates positions of player's buttons
 public void setPressBtnPositions()
 {
   pressBtnPositionsX = new float[numberOfPlayers];
@@ -266,7 +277,7 @@ public void setPressBtnPositions()
   pressBtnPositionY = 6*height/7;
 }
 
-//if on the cesond screen goes to first
+//if on the second screen goes to first
 //that's only possiblity
 public void backBtnClick()
 {
@@ -288,6 +299,7 @@ void mousePressed()
          playersNamesAndKeys[i].setText("");
 }
 
+//returns which text filed is in focus
 int textFiledInFocus() 
 {
     for (int i = 1; i < numberOfPlayers*2; i+=2)
@@ -296,6 +308,8 @@ int textFiledInFocus()
     return -1;
 }
 
+//for entering key controls in  setupScreen
+//for refreshing player's buttons to blue while playing
 void keyReleased() 
 {
   if(setupScreen)
@@ -317,6 +331,11 @@ void keyReleased()
   }
 }
 
+/**changes player's button color 
+ *if game score is 1 then it's green
+ *else if is -1 it's red
+ *else stays blue
+ */
 void keyPressed()
 {
   if(playGameScreen)
@@ -341,4 +360,6 @@ void keyPressed()
       }
     }
   }
+  else if(keyCode == ENTER && (wellcomeScreen || setupScreen))
+    forwardBtnClick();
 }
