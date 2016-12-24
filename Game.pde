@@ -57,8 +57,7 @@ abstract class Game
   
   
   /**
-   * Constructor initialize all game non specific elements and calls 
-   * abstract function to initalize game specific elements.
+   * Constructor initialize all game non specific elements.
    * @param gameName                    Name of game.
    * @param helpMessage                 Text that will be shown to users for hint in playing game.
    * @param numberOfSecondsPerRound     Maximal duration in seconds for each round of game.
@@ -78,7 +77,7 @@ abstract class Game
     startPlaying = false;
     passedFrames = 0;
     numberOfFramesPerRound = int(frameRate * numberOfSecondsPerRound);
-    initializeRound();
+    //initializeRound();
   }
 
 

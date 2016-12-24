@@ -58,6 +58,7 @@ class Equation extends Game
   public Equation(int numberOfRounds, int numberOfPlayers)
   {
     super("Equation", "Click if given equation is true.", 5, numberOfRounds, numberOfPlayers);
+    initializeRound();
   }
 
   public boolean checkSolution()

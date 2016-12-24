@@ -14,6 +14,7 @@ class WhiteScreen extends Game
   public WhiteScreen(int numberOfRounds, int numberOfPlayers)
   {
     super("True reaction", "Click when object appears.", 8, numberOfRounds, numberOfPlayers);
+    initializeRound();
   }
 
   public boolean drawCurrentRound()

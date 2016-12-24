@@ -5,10 +5,11 @@ class HittingObjects extends Game
   public float increment1, increment2;
   RShape object1, object2;
   color c1, c2;
+  Colors c = new Colors();
+
   
   public boolean initializeRound()
   {
-    Colors c = new Colors();
     increment1 = random(3, 5);
     increment2 = random(3, 5);
     object1 = createRandomShape(random(0.05*width, 0.12*width));
@@ -52,6 +53,7 @@ class HittingObjects extends Game
   {
     super("HittingObjects Game", "Click when objects collide.", 8, numberOfRounds, numberOfPlayers);
     this.hidden = hidden;
+    initializeRound();
   }
 
   public boolean checkSolution()
