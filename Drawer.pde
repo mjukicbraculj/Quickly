@@ -17,6 +17,16 @@ class Drawer
     text(text, centerX, centerY);
   }
   
+   //method draws text with chosen size, color, position
+  void drawTextByColor(String text, int fontSize,
+                  color fontColor, float centerX, float centerY)
+  {
+    textFont(myFont, fontSize);
+    fill(fontColor);
+    textAlign(CENTER);
+    text(text, centerX, centerY);
+  }
+  
   //method changes font size and color
   void setFont(int fontSize, int fontColor)
   {
