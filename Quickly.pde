@@ -43,11 +43,23 @@ void setup()
   Btns[0] = loadShape("images/pressButton1.svg");
   Btns[1] = loadShape("images/hitButton1.svg");
   Btns[2] = loadShape("images/failureButton1.svg");
-  games = new Game[3];
+  games = new Game[6];
   error = "";
   //for HittingObject game
   RG.init(this);
  
+}
+
+//initialisation of games
+//called when number of players is known
+public void createGames()
+{
+  games[0] = new MatchStatesByPopulation(4, numberOfPlayers);
+  games[1] = new Equation(4, numberOfPlayers);
+  games[2] = new WhiteScreen(4, numberOfPlayers);
+  games[3] = new MatchColorText(4, numberOfPlayers);
+  games[4] = new MatchCityState(4, numberOfPlayers);
+  games[5] = new HittingObjects(4, numberOfPlayers, false);
 }
 
 
@@ -99,14 +111,7 @@ void draw()
     
 }
 
-//initialisation of games
-//called when number of players is known
-public void createGames()
-{
-  games[1] = new Equation(2, numberOfPlayers);
-  games[0] = new WhiteScreen(2, numberOfPlayers);
-  games[2] = new HittingObjects(2, numberOfPlayers, false);
-}
+
 
 
 //adds buttons, textFields and all other controls...
