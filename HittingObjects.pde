@@ -51,7 +51,7 @@ class HittingObjects extends Game
 
   public HittingObjects(int numberOfRounds, int numberOfPlayers, boolean hidden)
   {
-    super("HittingObjects Game", "Click when objects collide.", 8, numberOfRounds, numberOfPlayers);
+    super("HittingObjects Game", "Click when objects collide.", 5, numberOfRounds+1, numberOfPlayers);
     this.hidden = hidden;
     initializeRound();
   }
@@ -72,28 +72,33 @@ class HittingObjects extends Game
    */
   public boolean drawCurrentRound()
   {
-    boolean visible = false;
-    if(object2.getX() - object1.getX() > width*0.3
-            || !hidden)
-      visible = true;
-    if(visible)
+    if(roundNumber == 0)
     {
-      fill(c1);
-      object1.draw();
+      Drawer drawer = new Drawer();
+      drawer.drawText(helpMessage, 30, color(255, 0, 0), width*0.95/2, height/2);
     }
-    object1.translate(increment1, 0);
-
-    if(visible)
+    else
     {
-      fill(c2);
-      object2.draw();
+      boolean visible = false;
+      if(object2.getX() - object1.getX() > width*0.3
+              || !hidden)
+        visible = true;
+      if(visible)
+      {
+        fill(c1);
+        object1.draw();
+      }
+      object1.translate(increment1, 0);
+  
+      if(visible)
+      {
+        fill(c2);
+        object2.draw();
+      }
+      object2.translate(-increment2, 0);
     }
-    object2.translate(-increment2, 0);
-
-    /*rectMode(CENTER);
-      fill(255, 0, 0);
-      rect(width/2, height/2, 0.3*width, 0.3*height);*/
     return true;
+    
   }
 
  

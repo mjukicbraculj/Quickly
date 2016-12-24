@@ -2,7 +2,9 @@ import controlP5.*;    //library for adding controls
 import geomerative.*;    //library used in HittingObjects game
 Drawer drawer;        // class for drawing text
 ControlP5 controls;    //for adding controls
-Button forwardBtn, backBtn, homeBtn, newGameBtn;    
+Button forwardBtn, backBtn, homeBtn, newGameBtn;
+//RadioButton gameType;
+CheckBox gameType;
 Textfield numberOfPlayersTF;
 Textfield[] playersNamesAndKeys;    
 PImage[] headingImg;
@@ -21,8 +23,9 @@ int maxPlayersNum = 10;
 int minPlayersNum = 1;    //1 or 2?
 int numberOfPlayers;    
 String error;
-Game[] games;
+ArrayList<Game> games;
 int currentGame;
+
 void setup()
 {
   fullScreen();
@@ -43,7 +46,7 @@ void setup()
   Btns[0] = loadShape("images/pressButton1.svg");
   Btns[1] = loadShape("images/hitButton1.svg");
   Btns[2] = loadShape("images/failureButton1.svg");
-  games = new Game[7];
+  games = new ArrayList<Game>();
   error = "";
   //for HittingObject game
   RG.init(this);
@@ -54,15 +57,40 @@ void setup()
 //called when number of players is known
 public void createGames()
 {
-  games[0] = new MatchStatesByPopulation(4, numberOfPlayers);
-  games[1] = new Equation(4, numberOfPlayers);
-  games[2] = new WhiteScreen(4, numberOfPlayers);
-  games[3] = new MatchColorText(4, numberOfPlayers);
-  games[4] = new MatchCityState(4, numberOfPlayers);
-  games[5] = new HittingObjects(4, numberOfPlayers, false);
-  games[6] = new SadFace(4, numberOfPlayers);
+  java.util.List checkBoxItems = gameType.getItems();
+  for(int j = 0; j < checkBoxItems.size(); ++j)
+  {
+    Toggle t = (Toggle)checkBoxItems.get(j);
+    if(t.getState())
+    {
+      int mode = (int)t.internalValue();
+      switch(mode)
+      {
+        case 0:
+          games.add(new Equation(2, numberOfPlayers));
+          break;
+        case 1:
+          games.add(new HittingObjects(2, numberOfPlayers, false));
+          break;
+        case 2:
+          games.add(new MatchCityState(2, numberOfPlayers));
+          break;
+        case 3:
+          games.add(new MatchColorText(2, numberOfPlayers));
+          break;
+        case 4:
+          games.add(new MatchStatesByPopulation(2, numberOfPlayers));
+          break;
+        case 5:
+          games.add(new SadFace(2, numberOfPlayers));
+          break;
+        case 6:
+          games.add(new WhiteScreen(2, numberOfPlayers));
+          break;
+      }
+    }
+  }
 }
-
 
 void draw()
 {
@@ -70,17 +98,19 @@ void draw()
   if(wellcomeScreen)
   {
     drawHeading();
-    drawer.drawText("Please, enter number of players...", 25, color(0, 0, 0), width*0.95/2, height/2);
+    drawer.drawText("Please, enter number of players...", 25, color(0, 0, 0), width*0.95/2, height/2.2);
+    //drawer.drawText("Please, select game type...", 25, color(0, 0, 0), width*0.95/2, height/1.5);
     drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
   }
   else if(setupScreen)
   {
-    drawer.drawText("Please, enter players names and key controls...", 25, color(0, 0, 0), width*0.95/2, height/6);
+    drawer.drawText("Please, enter players names and key controls...", 25, color(0, 0, 0), width*0.95/2 - 350, height/6);
+    drawer.drawText("Please, select type of games...", 25, color(0, 0, 0), width*0.95/2 + 350, height/6);
     drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
   }
   else if(playGameScreen)
   {
-    drawer.drawText(games[currentGame].helpMessage, 25, color(255, 0, 0), width*0.95/2, height/7);
+    drawer.drawText(games.get(currentGame).helpMessage, 25, color(255, 0, 0), width*0.95/2, height/7);
     for(int i = 0; i < numberOfPlayers; ++i)
     {
       shape(Btns[correspondingBtn[i]], pressBtnPositionsX[i], pressBtnPositionY, pressBtnWidth, 100);
@@ -91,11 +121,11 @@ void draw()
       if (correspondingBtn[i] == 1)
         delay(500);*/
         
-    games[currentGame].drawState();
-    if(games[currentGame].endOfGame())
+    games.get(currentGame).drawState();
+    if(games.get(currentGame).endOfGame())
     {
       ++currentGame;
-      if(currentGame > games.length - 1)
+      if(currentGame > games.size() - 1)
       {
         playGameScreen = false;
         endOfGameScreen = true;
@@ -112,12 +142,10 @@ void draw()
     
 }
 
-
-
-
 //adds buttons, textFields and all other controls...
 void addControls()
 {
+  controls.setFont(drawer.getControlFont(20));
   forwardBtn = controls.addButton("forward")
                     .setSize(width/15, height/15)
                     .setPosition(width*0.95/2 + 400, height/1.3)
@@ -128,6 +156,13 @@ void addControls()
                     .setPosition(width*0.95/2 - 500, height/1.3)
                     .setImage(loadImage("images/back.png"), Controller.DEFAULT)
                     .setVisible(false);  
+  //gameType = controls.addRadioButton("gameType", (int)(width*0.95/2)-55, (int)(height/1.4))
+  //                   .setSize(30, 30)
+  //                   .setVisible(false);
+  //gameType.addItem("default", 1);
+  //gameType.addItem("custom", 2);
+  //gameType.getItem("default").setState(true);
+  //gameType.getCaptionLabel().setFont(drawer.getButtonFont(20));
   newGameBtn = controls.addButton("newGame")
                        .setSize(width/15, height/15)
                        .setPosition(width*0.95/2 - 200 - width/15 , 4*height/5)
@@ -138,14 +173,28 @@ void addControls()
                        .setVisible(false);
   numberOfPlayersTF = controls.addTextfield("")
                                .setSize(width/15, height/20)
-                               .setPosition(width*0.95/2 - width/30, height/1.8)
+                               .setPosition(width*0.95/2 - width/30, height/2)
                                .setColorBackground(color(255, 255, 255))
-                               .setFont(drawer.getControlFont(30))
                                .setColorValueLabel(color(0, 0, 0))
                                .setVisible(false)
                                .setColorCursor(color(255, 255, 255));
                                
   numberOfPlayersTF.getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
+  
+  gameType = controls.addCheckBox("gameType")
+                       .setPosition(width*0.95/2 + 250, height/5)
+                       .setSize(30, 30)
+                       .addItem("Equation", 0)
+                       .addItem("Hitting objects", 1)
+                       .addItem("Match city state", 2)
+                       .addItem("Match color text", 3)
+                       .addItem("Match state by population", 4)
+                       .addItem("Sad face", 5)
+                       .addItem("White screen", 6)
+                       .setVisible(false);
+    java.util.List<Toggle> items = gameType.getItems();
+    for(int j = 0; j < gameType.getItems().size(); ++j)
+      items.get(j).setState(true);
   
   wellcomeScreenControls(true);                             
   
@@ -160,7 +209,7 @@ void addTextfields()
   {
     playersNamesAndKeys[i] = controls.addTextfield("Player"+i/2)
                                      .setSize(width/10, height/30)
-                                     .setPosition(width*0.95/2 - width/10-50, height/5 + pomak * i / 2)
+                                     .setPosition(width*0.95/2 - width/10-400, height/5 + pomak * i / 2)
                                      .setColorBackground(color(255, 255, 255))
                                      .setFont(drawer.getControlFont(20))
                                      .setColorValueLabel(color(0, 0, 0))
@@ -173,7 +222,7 @@ void addTextfields()
     playersNamesAndKeys[i].getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
     playersNamesAndKeys[i+1] = controls.addTextfield("Key"+i)
                                        .setSize(width/10, height/30)
-                                       .setPosition(width*0.95/2 + 50, height/5 + pomak * i / 2)
+                                       .setPosition(width*0.95/2 - 300, height/5 + pomak * i / 2)
                                        .setColorBackground(color(255, 255, 255))
                                        .setFont(drawer.getControlFont(20))
                                        .setColorValueLabel(color(0, 0, 0))
@@ -235,11 +284,13 @@ public void homeBtnClick()
   wellcomeScreenControls(true);
   endOfGameScreenControls(false);
 }
+
 public void wellcomeScreenControls(boolean visible)
 {
   forwardBtn.setVisible(visible);
   backBtn.setVisible(visible);
   numberOfPlayersTF.setVisible(visible);
+  //gameType.setVisible(visible);
   if(!visible)
   {
     forwardBtn.hide();
@@ -252,7 +303,8 @@ public void setupScreenControls(boolean visible)
   for(int i = 0; i < numberOfPlayers*2; ++i)
     playersNamesAndKeys[i].setVisible(visible);
   forwardBtn.setVisible(visible);
-  backBtn.setVisible(visible);  
+  backBtn.setVisible(visible); 
+  gameType.setVisible(visible);
   if(!visible)
   {
     forwardBtn.hide();
@@ -288,7 +340,6 @@ public void forwardBtnClick()
         error = "Number of players must be between 1 and 10";
         return;
       }
-      createGames();
       error = "";
       wellcomeScreen = false;
       wellcomeScreenControls(false);
@@ -314,6 +365,7 @@ public void forwardBtnClick()
     error = "";
     setupScreen = false;
     setupScreenControls(false);
+    createGames();
     playGameScreen = true;
     for(int i = 0; i < numberOfPlayers; i++)
       players[i] = new Player(playersNamesAndKeys[i*2].getText(), 
@@ -405,7 +457,7 @@ void keyPressed()
     {
       if(players[i].myKey == keyCode)
       {
-        int tmp = games[currentGame].score(i);
+        int tmp = games.get(currentGame).score(i);
         if(tmp == -1)
         {
           correspondingBtn[i] = 2;
