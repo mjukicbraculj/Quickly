@@ -43,7 +43,7 @@ void setup()
   Btns[0] = loadShape("images/pressButton1.svg");
   Btns[1] = loadShape("images/hitButton1.svg");
   Btns[2] = loadShape("images/failureButton1.svg");
-  games = new Game[6];
+  games = new Game[7];
   error = "";
   //for HittingObject game
   RG.init(this);
@@ -60,6 +60,7 @@ public void createGames()
   games[3] = new MatchColorText(4, numberOfPlayers);
   games[4] = new MatchCityState(4, numberOfPlayers);
   games[5] = new HittingObjects(4, numberOfPlayers, false);
+  games[6] = new SadFace(4, numberOfPlayers);
 }
 
 
@@ -79,7 +80,7 @@ void draw()
   }
   else if(playGameScreen)
   {
-    drawer.drawText(games[currentGame].helpMessage, 25, color(255, 0, 0), width*0.95/2, height/6);
+    drawer.drawText(games[currentGame].helpMessage, 25, color(255, 0, 0), width*0.95/2, height/7);
     for(int i = 0; i < numberOfPlayers; ++i)
     {
       shape(Btns[correspondingBtn[i]], pressBtnPositionsX[i], pressBtnPositionY, pressBtnWidth, 100);
