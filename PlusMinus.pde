@@ -29,7 +29,7 @@ class PlusMinus extends Game
     signs[0] = loadShape("images/minus.svg");
     signs[1] = loadShape("images/plus.svg");
     
-    array = new boolean[numberOfRounds][numberOfColumns];
+    array = new boolean[numberOfRows][numberOfColumns];
    
     imageSize = min((width-400)/numberOfColumns, (height-600)/numberOfRows);
    

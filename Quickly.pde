@@ -91,7 +91,7 @@ public void createGames()
           games.add(new HitBeaver(4, numberOfPlayers));
           break;
         case 8:
-          games.add(new PlusMinus(20, numberOfPlayers));
+          games.add(new PlusMinus(4, numberOfPlayers));
           break;
         case 9:
           games.add(new FiveDifferent(4, numberOfPlayers));
