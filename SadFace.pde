@@ -57,24 +57,16 @@ class SadFace extends Game
   
   public boolean drawCurrentRound()
   {
-    if(roundNumber == 0)
-    {
-      Drawer drawer = new Drawer();
-      drawer.drawText(helpMessage, 30, color(255, 0, 0), width*0.95/2, height/2);
-    }
-    else
-    {
-      if(passedFrames % frame == 0)
-        changeFaces();
-      for(int i = 0; i < numberOfRows; ++i)
-        for(int j = 0; j < numberOfColumns; ++j)
-        {
-          if(passedFrames > sadFaceTime && passedFrames < sadFaceTime + frame*2 &&  sadFacePosition == i * numberOfRows + j)
-            RG.shape(sad[sadType], tableX + j * imageSize, tableY + i *imageSize, imageSize, imageSize);
-          else
-            RG.shape(happy[happyType[i * numberOfRows +j]], tableX + j * imageSize, tableY + i *imageSize, imageSize, imageSize);
-        }
-    }
+    if(passedFrames % frame == 0)
+      changeFaces();
+    for(int i = 0; i < numberOfRows; ++i)
+      for(int j = 0; j < numberOfColumns; ++j)
+      {
+        if(passedFrames > sadFaceTime && passedFrames < sadFaceTime + frame*2 &&  sadFacePosition == i * numberOfRows + j)
+          RG.shape(sad[sadType], tableX + j * imageSize, tableY + i *imageSize, imageSize, imageSize);
+        else
+          RG.shape(happy[happyType[i * numberOfRows +j]], tableX + j * imageSize, tableY + i *imageSize, imageSize, imageSize);
+      }
     return true;
   }
   

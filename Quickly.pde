@@ -67,27 +67,34 @@ public void createGames()
       switch(mode)
       {
         case 0:
-          //games.add(new Equation(2, numberOfPlayers));
-          //games.add(new HitBeaver(20, numberOfPlayers));
-          games.add(new PlusMinus(20, numberOfPlayers));
+          games.add(new Equation(4, numberOfPlayers));
           break;
         case 1:
-          games.add(new HittingObjects(2, numberOfPlayers, false));
+          games.add(new HittingObjects(4, numberOfPlayers, false));
           break;
         case 2:
-          games.add(new MatchCityState(2, numberOfPlayers));
+          games.add(new MatchCityState(4, numberOfPlayers));
           break;
         case 3:
-          games.add(new MatchColorText(2, numberOfPlayers));
+          games.add(new MatchColorText(4, numberOfPlayers));
           break;
         case 4:
-          games.add(new MatchStatesByPopulation(2, numberOfPlayers));
+          games.add(new MatchStatesByPopulation(4, numberOfPlayers));
           break;
         case 5:
-          games.add(new SadFace(2, numberOfPlayers));
+          games.add(new SadFace(4, numberOfPlayers));
           break;
         case 6:
-          games.add(new WhiteScreen(2, numberOfPlayers));
+          games.add(new WhiteScreen(4, numberOfPlayers));
+          break;
+        case 7:
+          games.add(new HitBeaver(4, numberOfPlayers));
+          break;
+        case 8:
+          games.add(new PlusMinus(20, numberOfPlayers));
+          break;
+        case 9:
+          games.add(new FiveDifferent(4, numberOfPlayers));
           break;
       }
     }
@@ -198,6 +205,9 @@ void addControls()
                        .addItem("Match state by population", 4)
                        .addItem("Sad face", 5)
                        .addItem("White screen", 6)
+                       .addItem("Hit Beaver", 7)
+                       .addItem("Plus and Minus", 8)
+                       .addItem("Five different", 9)
                        .setVisible(false);
     java.util.List<Toggle> items = gameType.getItems();
     for(int j = 0; j < gameType.getItems().size(); ++j)

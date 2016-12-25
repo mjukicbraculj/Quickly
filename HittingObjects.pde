@@ -72,33 +72,24 @@ class HittingObjects extends Game
    */
   public boolean drawCurrentRound()
   {
-    if(roundNumber == 0)
+    boolean visible = false;
+    if(object2.getX() - object1.getX() > width*0.3
+            || !hidden)
+      visible = true;
+    if(visible)
     {
-      Drawer drawer = new Drawer();
-      drawer.drawText(helpMessage, 30, color(255, 0, 0), width*0.95/2, height/2);
+      fill(c1);
+      object1.draw();
     }
-    else
+    object1.translate(increment1, 0);
+
+    if(visible)
     {
-      boolean visible = false;
-      if(object2.getX() - object1.getX() > width*0.3
-              || !hidden)
-        visible = true;
-      if(visible)
-      {
-        fill(c1);
-        object1.draw();
-      }
-      object1.translate(increment1, 0);
-  
-      if(visible)
-      {
-        fill(c2);
-        object2.draw();
-      }
-      object2.translate(-increment2, 0);
+      fill(c2);
+      object2.draw();
     }
+    object2.translate(-increment2, 0);
     return true;
-    
   }
 
  
