@@ -67,7 +67,9 @@ public void createGames()
       switch(mode)
       {
         case 0:
-          games.add(new Equation(2, numberOfPlayers));
+          //games.add(new Equation(2, numberOfPlayers));
+          //games.add(new HitBeaver(20, numberOfPlayers));
+          games.add(new PlusMinus(20, numberOfPlayers));
           break;
         case 1:
           games.add(new HittingObjects(2, numberOfPlayers, false));
@@ -113,6 +115,7 @@ void draw()
     drawer.drawText(games.get(currentGame).helpMessage, 25, color(255, 0, 0), width*0.95/2, height/7);
     for(int i = 0; i < numberOfPlayers; ++i)
     {
+      shapeMode(CORNER);
       shape(Btns[correspondingBtn[i]], pressBtnPositionsX[i], pressBtnPositionY, pressBtnWidth, 100);
       drawer.drawText(players[i].name, 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+50);
       drawer.drawText(Integer.toString(players[i].score), 20, color(255, 255, 255), pressBtnPositionsX[i]+pressBtnWidth/2, pressBtnPositionY+80);
