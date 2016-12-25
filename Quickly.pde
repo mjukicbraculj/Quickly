@@ -120,15 +120,19 @@ void draw()
     /*for(int i = 0; i < numberOfPlayers; ++i)
       if (correspondingBtn[i] == 1)
         delay(500);*/
-        
-    games.get(currentGame).drawState();
-    if(games.get(currentGame).endOfGame())
+    if(games.get(currentGame).justStarted)
+      games.get(currentGame).printInstructions();
+    else
     {
-      ++currentGame;
-      if(currentGame > games.size() - 1)
+      games.get(currentGame).drawState();
+      if(games.get(currentGame).endOfGame())
       {
-        playGameScreen = false;
-        endOfGameScreen = true;
+        ++currentGame;
+        if(currentGame > games.size() - 1)
+        {
+          playGameScreen = false;
+          endOfGameScreen = true;
+        }
       }
     }
   }

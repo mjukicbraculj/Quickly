@@ -34,7 +34,12 @@ abstract class Game
   int numberOfFramesPerRound;
   // Number of frames before round starts.
   int numberOfFramesBeforeStart = 30;
-  
+  // Bolean that says if game just started so we need to print instructions.
+  boolean justStarted;
+  // Number of seconds instruction screen will be shown;
+  float numberOfSecondsForInstructionScreen = 1;
+  // Number of frames instruction screen will be shown;
+  int numberOfFramesForInstructionScreen;
   
   /**
    * Initialize everything specific game needs.
@@ -77,7 +82,24 @@ abstract class Game
     startPlaying = false;
     passedFrames = 0;
     numberOfFramesPerRound = int(frameRate * numberOfSecondsPerRound);
+    justStarted = true;
+    numberOfFramesForInstructionScreen = int(numberOfSecondsForInstructionScreen * frameRate);
     //initializeRound();
+  }
+  
+  public boolean printInstructions()
+  {
+    passedFrames++;
+    
+    Drawer drawer = new Drawer();
+    drawer.drawText(helpMessage, 30, color(255, 0, 0), width*0.95/2, height/2);
+    
+    if(passedFrames > numberOfFramesForInstructionScreen)
+    {
+      justStarted = false;
+      passedFrames = 0;
+    }
+    return true;
   }
 
 
