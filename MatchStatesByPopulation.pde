@@ -13,7 +13,7 @@ class MatchStatesByPopulation extends Game
   
   public MatchStatesByPopulation(int numberOfRounds, int numberOfPlayers)
   {
-    super("Match states by population", "Click if first state has bigger population.", 4, numberOfRounds, numberOfPlayers);
+    super("Match states by population", Quickly.GetString("StatePopulationHelp"), 4, numberOfRounds, numberOfPlayers);
     initializeRound();
   }
   

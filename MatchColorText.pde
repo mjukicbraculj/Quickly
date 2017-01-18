@@ -12,7 +12,7 @@ class MatchColorText extends Game
   
   public MatchColorText(int numberOfRounds, int numberOfPlayers)
   {
-    super("Match color and text", "Click when color of first word matches text of second.", 6, numberOfRounds, numberOfPlayers);
+    super("Match color and text", Quickly.GetString("ColorTextHelp"), 6, numberOfRounds, numberOfPlayers);
     initializeRound();
   }
   

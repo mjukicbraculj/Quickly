@@ -13,7 +13,7 @@ class SadFace extends Game
   
   public SadFace(int numberOfRounds, int numberOfPlayers)
   {
-    super("SadFace gama", "Click when you see sad face.", 8, numberOfRounds+1, numberOfPlayers);
+    super("SadFace gama", Quickly.GetString("SadFaceHelp"), 8, numberOfRounds+1, numberOfPlayers);
     numberOfRows = 7;
     numberOfColumns = 7;
     happy = new RShape[4];

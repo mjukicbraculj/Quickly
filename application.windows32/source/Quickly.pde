@@ -1,5 +1,10 @@
 import controlP5.*;    //library for adding controls
 import geomerative.*;    //library used in HittingObjects game
+import java.util.ResourceBundle;
+import java.util.PropertyResourceBundle;
+import java.util.Locale;
+import java.util.Enumeration;
+
 Drawer drawer;        // class for drawing text
 ControlP5 controls;    //for adding controls
 Button forwardBtn, backBtn, homeBtn, newGameBtn;
@@ -26,10 +31,17 @@ String error;
 ArrayList<Game> games;
 int currentGame;
 
+static Locale locale;
+static ResourceBundle res;
+String bundleName = "language";
+
+
 void setup()
 {
   fullScreen();
   frameRate(60);
+  res = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new ProcessingClassLoader(this));
+  //res = ResourceBundle.getBundle(bundleName, new Locale("hr"), new ProcessingClassLoader(this));
   //size(1500, 1000);
   drawer = new Drawer();
   controls = new ControlP5(this);
@@ -51,6 +63,21 @@ void setup()
   //for HittingObject game
   RG.init(this);
  
+ 
+}
+
+public static String GetString(String key)
+{
+  String value = null;
+  try
+  {
+    value = res.getString(key);
+  }
+  catch (Exception e)
+  {
+    value = key; // Poor substitute, but hey, might give an information anyway
+  }
+  return value;
 }
 
 //initialisation of games
@@ -107,14 +134,13 @@ void draw()
   if(wellcomeScreen)
   {
     drawHeading();
-    drawer.drawText("Please, enter number of players...", 25, color(0, 0, 0), width*0.95/2, height/2.2);
-    //drawer.drawText("Please, select game type...", 25, color(0, 0, 0), width*0.95/2, height/1.5);
+    drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width*0.95/2, height/2.2);
     drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
   }
   else if(setupScreen)
   {
-    drawer.drawText("Please, enter players names and key controls...", 25, color(0, 0, 0), width*0.95/2 - 350, height/6);
-    drawer.drawText("Please, select type of games...", 25, color(0, 0, 0), width*0.95/2 + 350, height/6);
+    drawer.drawText(GetString("playersName"), 25, color(0, 0, 0), width*0.95/2 - 350, height/6);
+    drawer.drawText(GetString("gameType"), 25, color(0, 0, 0), width*0.95/2 + 350, height/6);
     drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
   }
   else if(playGameScreen)
@@ -177,11 +203,11 @@ void addControls()
   //gameType.addItem("custom", 2);
   //gameType.getItem("default").setState(true);
   //gameType.getCaptionLabel().setFont(drawer.getButtonFont(20));
-  newGameBtn = controls.addButton("newGame")
+  newGameBtn = controls.addButton(GetString("newGame"))
                        .setSize(width/15, height/15)
                        .setPosition(width*0.95/2 - 200 - width/15 , 4*height/5)
                        .setVisible(false);
-  homeBtn = controls.addButton("home")
+  homeBtn = controls.addButton(GetString("home"))
                        .setSize(width/15, height/15)
                        .setPosition(width*0.95/2 + 200, 4*height/5)
                        .setVisible(false);
@@ -198,16 +224,16 @@ void addControls()
   gameType = controls.addCheckBox("gameType")
                        .setPosition(width*0.95/2 + 250, height/5)
                        .setSize(30, 30)
-                       .addItem("Equation", 0)
-                       .addItem("Hitting objects", 1)
-                       .addItem("Match city state", 2)
-                       .addItem("Match color text", 3)
-                       .addItem("Match state by population", 4)
-                       .addItem("Sad face", 5)
-                       .addItem("White screen", 6)
-                       .addItem("Hit Beaver", 7)
-                       .addItem("Plus and Minus", 8)
-                       .addItem("Five different", 9)
+                       .addItem(GetString("Equation"), 0)
+                       .addItem(GetString("Hitting_objects"), 1)
+                       .addItem(GetString("Match_city_state"), 2)
+                       .addItem(GetString("Match_color_text"), 3)
+                       .addItem(GetString("Match_state_by_population"), 4)
+                       .addItem(GetString("Sad_face"), 5)
+                       .addItem(GetString("White_screen"), 6)
+                       .addItem(GetString("Hit_Beaver"), 7)
+                       .addItem(GetString("Plus_and_Minus"), 8)
+                       .addItem(GetString("Five_different"), 9)
                        .setVisible(false);
     java.util.List<Toggle> items = gameType.getItems();
     for(int j = 0; j < gameType.getItems().size(); ++j)
@@ -224,14 +250,14 @@ void addTextfields()
   float pomak = (height/1.4 -height/5)/10;
   for(int i = 0; i < maxPlayersNum*2; i+=2)
   {
-    playersNamesAndKeys[i] = controls.addTextfield("Player"+i/2)
+    playersNamesAndKeys[i] = controls.addTextfield(GetString("Player")+i/2)
                                      .setSize(width/10, height/30)
                                      .setPosition(width*0.95/2 - width/10-400, height/5 + pomak * i / 2)
                                      .setColorBackground(color(255, 255, 255))
                                      .setFont(drawer.getControlFont(20))
                                      .setColorValueLabel(color(0, 0, 0))
                                      .setVisible(false)
-                                     .setText("Name"+i/2);
+                                     .setText(GetString("Name")+i/2);
     playersNamesAndKeys[i].getCaptionLabel()
                            .setFont(drawer.getButtonFont(15)).setColor(color(0, 0, 0))
                            .align(ControlP5.LEFT_OUTSIDE, ControlP5.CENTER)
@@ -277,9 +303,9 @@ void controlEvent(ControlEvent theEvent)
     forwardBtnClick();
   else if(theEvent.getName().equals("back"))
     backBtnClick();
-  else if(theEvent.getName().equals("home"))
+  else if(theEvent.getName().equals(GetString("home")))
     homeBtnClick();
-  else if(theEvent.getName().equals("newGame"))
+  else if(theEvent.getName().equals(GetString("newGame")))
     newGameBtnClick();
 }
 
@@ -354,7 +380,7 @@ public void forwardBtnClick()
       if(numberOfPlayers < 0 || numberOfPlayers > 10)
       {
         numberOfPlayers = 0;
-        error = "Number of players must be between 1 and 10";
+        error = GetString("intervalError");
         return;
       }
       error = "";
@@ -367,7 +393,7 @@ public void forwardBtnClick()
     }
     catch(Exception e)
     {
-      error = "Have to write number of players first!";
+      error = GetString("numberOfPlayersError");
     }
     
   }
@@ -376,7 +402,7 @@ public void forwardBtnClick()
     for(int i = 0; i < numberOfPlayers; ++i)
       if(playersNamesAndKeys[i*2+1].getText().equals(""))
        {
-         error = "All players have to select key for playing...!";
+         error = GetString("keysError");
          return;
        }
     error = "";
@@ -425,7 +451,7 @@ public void backBtnClick()
 void mousePressed()
 {
   for(int i = 0; i < numberOfPlayers * 2; i+=2)
-      if(playersNamesAndKeys[i].isFocus() && playersNamesAndKeys[i].getText().equals("Name"+i/2))
+      if(playersNamesAndKeys[i].isFocus() && playersNamesAndKeys[i].getText().equals(GetString("Name")+i/2))
          playersNamesAndKeys[i].setText("");
 }
 

@@ -24,7 +24,7 @@ class HitBeaver extends Game
   
   public HitBeaver(int numberOfRounds, int numberOfPlayers)
   {
-    super("Hit beaver", "Click when you see beaver.", 8, numberOfRounds, numberOfPlayers);
+    super("Hit beaver", Quickly.GetString("BeaverHeplp"), 8, numberOfRounds, numberOfPlayers);
     
     holeSize = int((min(width, height)*0.9-(numberOfHoles+1)*50)/numberOfHoles);
 

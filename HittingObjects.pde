@@ -51,7 +51,7 @@ class HittingObjects extends Game
 
   public HittingObjects(int numberOfRounds, int numberOfPlayers, boolean hidden)
   {
-    super("HittingObjects Game", "Click when objects collide.", 5, numberOfRounds+1, numberOfPlayers);
+    super("HittingObjects Game", Quickly.GetString("ObjectsHelp"), 5, numberOfRounds+1, numberOfPlayers);
     this.hidden = hidden;
     initializeRound();
   }

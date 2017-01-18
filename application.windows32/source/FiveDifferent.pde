@@ -8,7 +8,7 @@ class FiveDifferent extends Game
   
   public FiveDifferent(int numberOfRounds, int numberOfPlayers)
   {
-    super("FiveDifferent", "Click when you see five different characters.", 12, numberOfRounds, numberOfPlayers);
+    super("FiveDifferent", Quickly.GetString("FiveHelp"), 12, numberOfRounds, numberOfPlayers);
     images = new PImage[5];
     for(int i = 0; i < images.length; ++i)
       images[i] = loadImage("images/image" + i + ".png");

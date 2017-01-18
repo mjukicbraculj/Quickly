@@ -92,7 +92,7 @@ abstract class Game
     passedFrames++;
     
     Drawer drawer = new Drawer();
-    drawer.drawText(helpMessage, 30, color(255, 0, 0), width*0.95/2, height/2);
+    drawer.drawText(Quickly.GetString(helpMessage), 30, color(255, 0, 0), width*0.95/2, height/2);
     
     if(passedFrames > numberOfFramesForInstructionScreen)
     {

@@ -23,7 +23,7 @@ class PlusMinus extends Game
   
   public PlusMinus(int numberOfRounds, int numberOfPlayers)
   {
-    super("More plus than minus", "Click if there are more plus than minus", 8, numberOfRounds, numberOfPlayers);
+    super("More plus than minus", Quickly.GetString("PlusMinusHelp"), 8, numberOfRounds, numberOfPlayers);
     
     signs = new PShape[2];
     signs[0] = loadShape("images/minus.svg");

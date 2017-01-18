@@ -15,7 +15,7 @@ class MatchCityState extends Game
   
   public MatchCityState(int numberOfRounds, int numberOfPlayers)
   {
-    super("Match city with state", "Click when city is in state.", 4, numberOfRounds, numberOfPlayers);
+    super("Match city with state", Quickly.GetString("CityStateHelp"), 4, numberOfRounds, numberOfPlayers);
     initializeRound();
   }
   
