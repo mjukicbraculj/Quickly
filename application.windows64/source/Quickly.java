@@ -60,13 +60,14 @@ static Locale locale;
 static ResourceBundle res;
 String bundleName = "language";
 
+StringDict specialKeys;
 
 public void setup()
 {
   
   frameRate(60);
-  res = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new ProcessingClassLoader(this));
-  //res = ResourceBundle.getBundle(bundleName, new Locale("hr"), new ProcessingClassLoader(this));
+  //res = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new ProcessingClassLoader(this));
+  res = ResourceBundle.getBundle(bundleName, new Locale("hr"), new ProcessingClassLoader(this));
   //size(1500, 1000);
   drawer = new Drawer();
   controls = new ControlP5(this);
@@ -87,8 +88,28 @@ public void setup()
   error = "";
   //for HittingObject game
   RG.init(this);
- 
- 
+  inicialiseSpecialKeysDictionary();
+
+}
+
+
+private void inicialiseSpecialKeysDictionary()
+{
+  specialKeys = new StringDict();
+  specialKeys.set(Integer.toString(UP), "UP");
+  specialKeys.set(Integer.toString(DOWN), "DOWN");
+  specialKeys.set(Integer.toString(LEFT), "LEFT");
+  specialKeys.set(Integer.toString(RIGHT), "RIGHT");
+  specialKeys.set(Integer.toString(ALT), "ALT");
+  specialKeys.set(Integer.toString(CONTROL), "CONTROL");
+  specialKeys.set(Integer.toString(SHIFT), "SHIFT");
+  specialKeys.set(Integer.toString(BACKSPACE), "BACKSPACE");
+  specialKeys.set(Integer.toString(TAB), "TAB");
+  specialKeys.set(Integer.toString(ENTER), "ENTER");
+  specialKeys.set(Integer.toString(RETURN), "RETURN");
+  specialKeys.set(Integer.toString(DELETE), "DELETE");
+  specialKeys.set(Integer.toString(32), "SPACE");
+  println(specialKeys);
 }
 
 public static String GetString(String key)
@@ -294,6 +315,7 @@ public void addTextfields()
                                        .setColorBackground(color(255, 255, 255))
                                        .setFont(drawer.getControlFont(20))
                                        .setColorValueLabel(color(0, 0, 0))
+                                       .setText(str(parseChar(PApplet.parseInt(random(65, 90)))))
                                        .setVisible(false);
     playersNamesAndKeys[i+1].getCaptionLabel().setFont(drawer.getButtonFont(10)).setVisible(false);
     playersNamesAndKeys[i+1].getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
@@ -435,9 +457,18 @@ public void forwardBtnClick()
     setupScreenControls(false);
     createGames();
     playGameScreen = true;
-    for(int i = 0; i < numberOfPlayers; i++)
-      players[i] = new Player(playersNamesAndKeys[i*2].getText(), 
-                Integer.parseInt(playersNamesAndKeys[i*2+1].getText()));
+    for(int i = 0; i < numberOfPlayers; i++){
+      int playerKey = -1; 
+      String[] keys = specialKeys.keyArray();
+      for(int k = 0; k < keys.length; ++k)
+        if(playersNamesAndKeys[i*2+1].getText().equals(specialKeys.get(keys[k]))){
+          playerKey = parseInt(keys[k]);
+          break;
+        }
+      if(playerKey == -1)
+        playerKey = (int)(playersNamesAndKeys[i*2+1].getText().charAt(0));
+      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playerKey);
+    }
     correspondingBtn = new int[numberOfPlayers];
     for(int i = 0; i < numberOfPlayers; ++i)
       correspondingBtn[i] = 0;
@@ -496,11 +527,10 @@ public void keyReleased()
   if(setupScreen)
   {
     int index = textFiledInFocus();
-    if (index >= 0) {
-      //playersNamesAndKeys[index].setText(playersNamesAndKeys[index].getText() + " (" +
-      //                                            Integer.toString(keyCode) + ")");
-      playersNamesAndKeys[index].setText(Integer.toString(keyCode));                                 
-    }
+    String keyText = specialKeys.get(Integer.toString(keyCode));
+    if(keyText == null)
+      keyText = str(key).toUpperCase();
+    playersNamesAndKeys[index].setText(keyText);
   }
   else if(playGameScreen)
   {
