@@ -37,6 +37,8 @@ String bundleName = "language";
 
 StringDict specialKeys;
 
+char defaultPressingButtons[] = {'Q', 'P', 'Y', 'M', 'A', 'L', 'Z', 'H', 'B', '1', '9'};
+
 void setup()
 {
   fullScreen();
@@ -102,7 +104,7 @@ public static String GetString(String key)
 }
 
 //initialisation of games
-//called when number of players is known
+//called when number of is known
 public void createGames()
 {
   java.util.List checkBoxItems = gameType.getItems();
@@ -166,7 +168,7 @@ void draw()
   }
   else if(playGameScreen)
   {
-    drawer.drawText(games.get(currentGame).helpMessage, 25, color(255, 0, 0), width*0.95/2, height/7);
+    drawer.drawText(games.get(currentGame).helpMessage, 25, color(255, 0, 0), width/2, height/7);
     for(int i = 0; i < numberOfPlayers; ++i)
     {
       shapeMode(CORNER);
@@ -290,12 +292,15 @@ void addTextfields()
                                        .setColorBackground(color(255, 255, 255))
                                        .setFont(drawer.getControlFont(20))
                                        .setColorValueLabel(color(0, 0, 0))
-                                       .setText(str(parseChar(int(random(65, 90)))))
+                                       //.setText(str(parseChar(int(random(65, 90)))))
+                                       .setText(str(defaultPressingButtons[i/2]))
                                        .setVisible(false);
     playersNamesAndKeys[i+1].getCaptionLabel().setFont(drawer.getButtonFont(10)).setVisible(false);
     playersNamesAndKeys[i+1].getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
   }
 }
+
+
 
 //draws images for creating heading
 void drawHeading()

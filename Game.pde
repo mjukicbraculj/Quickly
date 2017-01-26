@@ -13,7 +13,7 @@ abstract class Game
   // Size of font for game name;
   int gameNameFontSize = 40;
   // Size of font for help message.
-  int helpMessageFontSize = 25;
+  int helpMessageFontSize = 50;
   // Number of iteration each game will be played.
   int numberOfRounds;
   // Number of players playing game, needed for array scoreForPlayer.
@@ -37,7 +37,7 @@ abstract class Game
   // Bolean that says if game just started so we need to print instructions.
   boolean justStarted;
   // Number of seconds instruction screen will be shown;
-  float numberOfSecondsForInstructionScreen = 1;
+  float numberOfSecondsForInstructionScreen = 3;
   // Number of frames instruction screen will be shown;
   int numberOfFramesForInstructionScreen;
   
@@ -92,7 +92,7 @@ abstract class Game
     passedFrames++;
     
     Drawer drawer = new Drawer();
-    drawer.drawText(Quickly.GetString(helpMessage), 30, color(255, 0, 0), width*0.95/2, height/2);
+    drawer.drawText(Quickly.GetString(helpMessage), helpMessageFontSize, color(255, 0, 0), width/2, height/2);
     
     if(passedFrames > numberOfFramesForInstructionScreen)
     {

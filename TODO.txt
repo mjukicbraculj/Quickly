@@ -1,0 +1,7 @@
+Fix sad face (on click on first sad face result is false even if there is sad face).
+
+Add box for choosing how many of each game will be played.
+
+Transfer drawing hint text into class Game from class Quickly.
+
+Remove controlP5 from usage is Quickly class so game can be exported to JS and play on internet.
