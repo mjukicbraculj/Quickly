@@ -510,7 +510,8 @@ void keyReleased()
     String keyText = specialKeys.get(Integer.toString(keyCode));
     if(keyText == null)
       keyText = str(key).toUpperCase();
-    playersNamesAndKeys[index].setText(keyText);
+    if(index != -1)
+      playersNamesAndKeys[index].setText(keyText);
   }
   else if(playGameScreen)
   {
