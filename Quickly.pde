@@ -31,6 +31,7 @@ String error;
 ArrayList<Game> games;
 int currentGame;
 
+
 static Locale locale;
 static ResourceBundle res;
 String bundleName = "language";
@@ -38,6 +39,8 @@ String bundleName = "language";
 StringDict specialKeys;
 
 char defaultPressingButtons[] = {'Q', 'P', 'Y', 'M', 'A', 'L', 'Z', 'H', 'B', '1', '9'};
+int playersKeysCodes[] = {int('Q'), int('P'), int('Y'), int('M'), int('A'), int('L'), int('Z'), int('H'), int('B'), int('1'), int('9')};
+
 
 void setup()
 {
@@ -438,16 +441,7 @@ public void forwardBtnClick()
     createGames();
     playGameScreen = true;
     for(int i = 0; i < numberOfPlayers; i++){
-      int playerKey = -1; 
-      String[] keys = specialKeys.keyArray();
-      for(int k = 0; k < keys.length; ++k)
-        if(playersNamesAndKeys[i*2+1].getText().equals(specialKeys.get(keys[k]))){
-          playerKey = parseInt(keys[k]);
-          break;
-        }
-      if(playerKey == -1)
-        playerKey = (int)(playersNamesAndKeys[i*2+1].getText().charAt(0));
-      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playerKey);
+      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playersKeysCodes[i]);
     }
     correspondingBtn = new int[numberOfPlayers];
     for(int i = 0; i < numberOfPlayers; ++i)
@@ -507,11 +501,14 @@ void keyReleased()
   if(setupScreen)
   {
     int index = textFiledInFocus();
-    String keyText = specialKeys.get(Integer.toString(keyCode));
-    if(keyText == null)
-      keyText = str(key).toUpperCase();
-    if(index != -1)
+    if(index != -1){
+      String keyText = specialKeys.get(Integer.toString(keyCode));
+      if(keyText == null)
+        keyText = str(key).toUpperCase();      
       playersNamesAndKeys[index].setText(keyText);
+      playersKeysCodes[index/2] = keyCode;
+      print(index/2 + "dobio " + keyCode);
+    }
   }
   else if(playGameScreen)
   {

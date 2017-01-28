@@ -56,11 +56,16 @@ String error;
 ArrayList<Game> games;
 int currentGame;
 
+
 static Locale locale;
 static ResourceBundle res;
 String bundleName = "language";
 
 StringDict specialKeys;
+
+char defaultPressingButtons[] = {'Q', 'P', 'Y', 'M', 'A', 'L', 'Z', 'H', 'B', '1', '9'};
+int playersKeysCodes[] = {PApplet.parseInt('Q'), PApplet.parseInt('P'), PApplet.parseInt('Y'), PApplet.parseInt('M'), PApplet.parseInt('A'), PApplet.parseInt('L'), PApplet.parseInt('Z'), PApplet.parseInt('H'), PApplet.parseInt('B'), PApplet.parseInt('1'), PApplet.parseInt('9')};
+
 
 public void setup()
 {
@@ -127,7 +132,7 @@ public static String GetString(String key)
 }
 
 //initialisation of games
-//called when number of players is known
+//called when number of is known
 public void createGames()
 {
   java.util.List checkBoxItems = gameType.getItems();
@@ -191,7 +196,7 @@ public void draw()
   }
   else if(playGameScreen)
   {
-    drawer.drawText(games.get(currentGame).helpMessage, 25, color(255, 0, 0), width*0.95f/2, height/7);
+    drawer.drawText(games.get(currentGame).helpMessage, 25, color(255, 0, 0), width/2, height/7);
     for(int i = 0; i < numberOfPlayers; ++i)
     {
       shapeMode(CORNER);
@@ -315,12 +320,15 @@ public void addTextfields()
                                        .setColorBackground(color(255, 255, 255))
                                        .setFont(drawer.getControlFont(20))
                                        .setColorValueLabel(color(0, 0, 0))
-                                       .setText(str(parseChar(PApplet.parseInt(random(65, 90)))))
+                                       //.setText(str(parseChar(int(random(65, 90)))))
+                                       .setText(str(defaultPressingButtons[i/2]))
                                        .setVisible(false);
     playersNamesAndKeys[i+1].getCaptionLabel().setFont(drawer.getButtonFont(10)).setVisible(false);
     playersNamesAndKeys[i+1].getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
   }
 }
+
+
 
 //draws images for creating heading
 public void drawHeading()
@@ -458,16 +466,7 @@ public void forwardBtnClick()
     createGames();
     playGameScreen = true;
     for(int i = 0; i < numberOfPlayers; i++){
-      int playerKey = -1; 
-      String[] keys = specialKeys.keyArray();
-      for(int k = 0; k < keys.length; ++k)
-        if(playersNamesAndKeys[i*2+1].getText().equals(specialKeys.get(keys[k]))){
-          playerKey = parseInt(keys[k]);
-          break;
-        }
-      if(playerKey == -1)
-        playerKey = (int)(playersNamesAndKeys[i*2+1].getText().charAt(0));
-      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playerKey);
+      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playersKeysCodes[i]);
     }
     correspondingBtn = new int[numberOfPlayers];
     for(int i = 0; i < numberOfPlayers; ++i)
@@ -527,10 +526,14 @@ public void keyReleased()
   if(setupScreen)
   {
     int index = textFiledInFocus();
-    String keyText = specialKeys.get(Integer.toString(keyCode));
-    if(keyText == null)
-      keyText = str(key).toUpperCase();
-    playersNamesAndKeys[index].setText(keyText);
+    if(index != -1){
+      String keyText = specialKeys.get(Integer.toString(keyCode));
+      if(keyText == null)
+        keyText = str(key).toUpperCase();      
+      playersNamesAndKeys[index].setText(keyText);
+      playersKeysCodes[index/2] = keyCode;
+      print(index/2 + "dobio " + keyCode);
+    }
   }
   else if(playGameScreen)
   {
@@ -827,7 +830,7 @@ abstract class Game
   // Size of font for game name;
   int gameNameFontSize = 40;
   // Size of font for help message.
-  int helpMessageFontSize = 25;
+  int helpMessageFontSize = 50;
   // Number of iteration each game will be played.
   int numberOfRounds;
   // Number of players playing game, needed for array scoreForPlayer.
@@ -851,7 +854,7 @@ abstract class Game
   // Bolean that says if game just started so we need to print instructions.
   boolean justStarted;
   // Number of seconds instruction screen will be shown;
-  float numberOfSecondsForInstructionScreen = 1;
+  float numberOfSecondsForInstructionScreen = 3;
   // Number of frames instruction screen will be shown;
   int numberOfFramesForInstructionScreen;
   
@@ -906,7 +909,7 @@ abstract class Game
     passedFrames++;
     
     Drawer drawer = new Drawer();
-    drawer.drawText(Quickly.GetString(helpMessage), 30, color(255, 0, 0), width*0.95f/2, height/2);
+    drawer.drawText(Quickly.GetString(helpMessage), helpMessageFontSize, color(255, 0, 0), width/2, height/2);
     
     if(passedFrames > numberOfFramesForInstructionScreen)
     {
@@ -1369,7 +1372,7 @@ class MatchStatesByPopulation extends Game
 
   
 }
-class Player
+  class Player
 {
   int myKey;
   String name;

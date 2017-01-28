@@ -1,4 +1,4 @@
-class Player
+  class Player
 {
   int myKey;
   String name;
