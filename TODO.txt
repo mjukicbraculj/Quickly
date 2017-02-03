@@ -4,4 +4,4 @@ Add box for choosing how many of each game will be played.
 
 Transfer drawing hint text into class Game from class Quickly.
 
-Remove controlP5 from usage is Quickly class so game can be exported to JS and play on internet.
+Remove controlP5 from usage is Quickly class so game can be exported to JS and play on internet. --> in process
