@@ -40,9 +40,4 @@ class Drawer
     return myFont;      
   }
   
-  ControlFont getControlFont(int fontSize)
-  {
-    return new ControlFont(myFont, fontSize);
-  }
-  
 }

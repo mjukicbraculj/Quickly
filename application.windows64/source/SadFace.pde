@@ -26,7 +26,7 @@ class SadFace extends Game
       sad[i] = RG.loadShape("images/sad" + i + ".svg");
     }
     angles = new float[]{PI/2, -PI/2, PI, 0, 0, 3*PI/2};
-    tableX = width*0.95/2 - (numberOfColumns*imageSize)/2;
+    tableX = width/2 - (numberOfColumns*imageSize)/2;
     tableY = height/7 + 100;
     initializeRound();
   }
@@ -50,7 +50,7 @@ class SadFace extends Game
   
   public boolean checkSolution()
   {
-    if(passedFrames > sadFaceTime && passedFrames < sadFaceTime + frame*2 && roundNumber > 0)
+    if(passedFrames > sadFaceTime && passedFrames < sadFaceTime + frame*2)
       return true;
     return false;
   }

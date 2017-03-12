@@ -9,7 +9,7 @@ class FiveDifferent extends Game
   public FiveDifferent(int numberOfRounds, int numberOfPlayers)
   {
     super("FiveDifferent", Quickly.GetString("FiveHelp"), 12, numberOfRounds, numberOfPlayers);
-    images = new PImage[5];
+    images = new PImage[6];
     for(int i = 0; i < images.length; ++i)
       images[i] = loadImage("images/image" + i + ".png");
     imagesOnScreen = new IntList();
@@ -35,29 +35,18 @@ class FiveDifferent extends Game
   
   public boolean checkSolution()
   {
-    int image0 = 0, image1 = 0, image2 = 0, image3 = 0, image4 = 0;
+    int[] counterOfImages = new int[images.length];
+    for(int i = 0; i < counterOfImages.length; ++i)
+      counterOfImages[i] = 0;
     for(int i = 0; i < imagesOnScreen.size(); ++i)
     {
-      switch(imagesOnScreen.get(i))
-      {
-        case 0:
-          image0++;
-          break;
-        case 1:
-          image1++;
-          break;
-        case 2: 
-          image2++;
-          break;
-        case 3: 
-          image3++;
-          break;
-        case 4:
-          image4++;
-          break;
-      }
+      counterOfImages[imagesOnScreen.get(i)]++;
     }
-    if(image0 > 0 && image1 > 0 && image2 > 0 && image3 > 0 && image4 > 0)
+    int positiveNumberOfImagesType = 0;
+    for(int i = 0; i < counterOfImages.length; ++i)
+      if(counterOfImages[i] > 0)
+        positiveNumberOfImagesType++;
+    if(positiveNumberOfImagesType > 4)
       return true;
     return false;
   }

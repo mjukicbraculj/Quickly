@@ -1,4 +1,3 @@
-import controlP5.*;    //library for adding controls
 import geomerative.*;    //library used in HittingObjects game
 import java.util.ResourceBundle;
 import java.util.PropertyResourceBundle;
@@ -6,12 +5,12 @@ import java.util.Locale;
 import java.util.Enumeration;
 
 Drawer drawer;        // class for drawing text
-ControlP5 controls;    //for adding controls
+GUI controls;    //for adding controls
 Button forwardBtn, backBtn, homeBtn, newGameBtn;
 //RadioButton gameType;
-CheckBox gameType;
-Textfield numberOfPlayersTF;
-Textfield[] playersNamesAndKeys;    
+ArrayList<CheckBox> gameType;
+TextBox numberOfPlayersTF;
+TextBox[] playersNamesAndKeys;    
 PImage[] headingImg;
 PShape[] Btns;
 int[] correspondingBtn;    //red, green or blue button
@@ -50,7 +49,8 @@ void setup()
   res = ResourceBundle.getBundle(bundleName, new Locale("hr"), new ProcessingClassLoader(this));
   //size(1500, 1000);
   drawer = new Drawer();
-  controls = new ControlP5(this);
+  controls = new GUI();
+  gameType = new ArrayList<CheckBox>();
   wellcomeScreen = true;
   setupScreen = false;
   playGameScreen = false;
@@ -110,64 +110,44 @@ public static String GetString(String key)
 //called when number of is known
 public void createGames()
 {
-  java.util.List checkBoxItems = gameType.getItems();
-  for(int j = 0; j < checkBoxItems.size(); ++j)
-  {
-    Toggle t = (Toggle)checkBoxItems.get(j);
-    if(t.getState())
-    {
-      int mode = (int)t.internalValue();
-      switch(mode)
-      {
-        case 0:
-          games.add(new Equation(4, numberOfPlayers));
-          break;
-        case 1:
-          games.add(new HittingObjects(4, numberOfPlayers, false));
-          break;
-        case 2:
-          games.add(new MatchCityState(4, numberOfPlayers));
-          break;
-        case 3:
-          games.add(new MatchColorText(4, numberOfPlayers));
-          break;
-        case 4:
-          games.add(new MatchStatesByPopulation(4, numberOfPlayers));
-          break;
-        case 5:
-          games.add(new SadFace(4, numberOfPlayers));
-          break;
-        case 6:
-          games.add(new WhiteScreen(4, numberOfPlayers));
-          break;
-        case 7:
-          games.add(new HitBeaver(4, numberOfPlayers));
-          break;
-        case 8:
-          games.add(new PlusMinus(4, numberOfPlayers));
-          break;
-        case 9:
-          games.add(new FiveDifferent(4, numberOfPlayers));
-          break;
-      }
-    }
-  }
+  if(gameType.get(0).isChecked())
+    games.add(new Equation(4, numberOfPlayers));
+  if(gameType.get(1).isChecked())
+    games.add(new HittingObjects(4, numberOfPlayers, false));
+  if(gameType.get(2).isChecked())
+    games.add(new MatchCityState(4, numberOfPlayers));
+  if(gameType.get(3).isChecked())
+    games.add(new MatchColorText(4, numberOfPlayers));
+  if(gameType.get(4).isChecked())
+    games.add(new MatchStatesByPopulation(4, numberOfPlayers));
+  if(gameType.get(5).isChecked())
+    games.add(new SadFace(4, numberOfPlayers));
+  if(gameType.get(6).isChecked())
+    games.add(new WhiteScreen(4, numberOfPlayers));
+  if(gameType.get(7).isChecked())
+    games.add(new HitBeaver(4, numberOfPlayers));
+  if(gameType.get(8).isChecked())
+    games.add(new PlusMinus(4, numberOfPlayers));
+  if(gameType.get(9).isChecked())
+    games.add(new FiveDifferent(4, numberOfPlayers));
+  
 }
 
 void draw()
 {
   background(150, 150, 150);
+  controls.show();
   if(wellcomeScreen)
   {
     drawHeading();
-    drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width*0.95/2, height/2.2);
-    drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
+    drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width/2, height/2.2);
+    drawer.drawText(error, 25, color(255, 0, 0), width/2, height*6/7);
   }
   else if(setupScreen)
   {
-    drawer.drawText(GetString("playersName"), 25, color(0, 0, 0), width*0.95/2 - 350, height/6);
-    drawer.drawText(GetString("gameType"), 25, color(0, 0, 0), width*0.95/2 + 350, height/6);
-    drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
+    drawer.drawText(GetString("playersName"), 25, color(0, 0, 0), width/2 - 350, height/6);
+    drawer.drawText(GetString("gameType"), 25, color(0, 0, 0), width/2 + 350, height/6);
+    drawer.drawText(error, 25, color(255, 0, 0), width/2, height*6/7);
   }
   else if(playGameScreen)
   {
@@ -202,7 +182,7 @@ void draw()
   {
     for(int i = 0; i < numberOfPlayers; ++i)
       drawer.drawText(players[i].name + " ----> " + players[i].score, 
-                                      20, color(0, 0, 0), width*0.95/2, (height/1.4 -height/5)/10*i + height/5);
+                                      20, color(0, 0, 0), width/2, (height/1.4 -height/5)/10*i + height/5);
     endOfGameScreenControls(true);
   }
     
@@ -211,59 +191,53 @@ void draw()
 //adds buttons, textFields and all other controls...
 void addControls()
 {
-  controls.setFont(drawer.getControlFont(20));
+  //controls.setFont(drawer.getControlFont(20));
   forwardBtn = controls.addButton("forward")
                     .setSize(width/15, height/15)
-                    .setPosition(width*0.95/2 + 400, height/1.3)
-                    .setImage(loadImage("images/forward.png"), Controller.DEFAULT)
+                    .setPosition(width/2 + 400, height/1.3)
+                    .setImage(loadImage("images/forward.png"))
                     .setVisible(false);
   backBtn = controls.addButton("back")
                     .setSize(width/15, height/15)
-                    .setPosition(width*0.95/2 - 500, height/1.3)
-                    .setImage(loadImage("images/back.png"), Controller.DEFAULT)
+                    .setPosition(width/2 - 500, height/1.3)
+                    .setImage(loadImage("images/back.png"))
                     .setVisible(false);  
-  //gameType = controls.addRadioButton("gameType", (int)(width*0.95/2)-55, (int)(height/1.4))
-  //                   .setSize(30, 30)
-  //                   .setVisible(false);
-  //gameType.addItem("default", 1);
-  //gameType.addItem("custom", 2);
-  //gameType.getItem("default").setState(true);
-  //gameType.getCaptionLabel().setFont(drawer.getButtonFont(20));
+  
   newGameBtn = controls.addButton(GetString("newGame"))
                        .setSize(width/15, height/15)
-                       .setPosition(width*0.95/2 - 200 - width/15 , 4*height/5)
-                       .setVisible(false);
+                       .setPosition(width/2 - 200 - width/15 , 4*height/5)
+                       .setVisible(false)
+                       .setText(GetString("newGame"));
   homeBtn = controls.addButton(GetString("home"))
                        .setSize(width/15, height/15)
-                       .setPosition(width*0.95/2 + 200, 4*height/5)
-                       .setVisible(false);
-  numberOfPlayersTF = controls.addTextfield("")
+                       .setPosition(width/2 + 200, 4*height/5)
+                       .setVisible(false)
+                       .setText(GetString("home"));
+  numberOfPlayersTF = controls.addTextBox("")
                                .setSize(width/15, height/20)
-                               .setPosition(width*0.95/2 - width/30, height/2)
-                               .setColorBackground(color(255, 255, 255))
-                               .setColorValueLabel(color(0, 0, 0))
-                               .setVisible(false)
-                               .setColorCursor(color(255, 255, 255));
+                               .setPosition(width/2 - width/30, height/2)
+                               .setBackgroundColor(color(255, 255, 255))
+                               .setFontColor(color(0, 0, 0))
+                               .setVisible(false);
                                
-  numberOfPlayersTF.getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
   
-  gameType = controls.addCheckBox("gameType")
-                       .setPosition(width*0.95/2 + 250, height/5)
-                       .setSize(30, 30)
-                       .addItem(GetString("Equation"), 0)
-                       .addItem(GetString("Hitting_objects"), 1)
-                       .addItem(GetString("Match_city_state"), 2)
-                       .addItem(GetString("Match_color_text"), 3)
-                       .addItem(GetString("Match_state_by_population"), 4)
-                       .addItem(GetString("Sad_face"), 5)
-                       .addItem(GetString("White_screen"), 6)
-                       .addItem(GetString("Hit_Beaver"), 7)
-                       .addItem(GetString("Plus_and_Minus"), 8)
-                       .addItem(GetString("Five_different"), 9)
-                       .setVisible(false);
-    java.util.List<Toggle> items = gameType.getItems();
-    for(int j = 0; j < gameType.getItems().size(); ++j)
-      items.get(j).setState(true);
+  gameType.add(controls.addCheckBox(GetString("Equation")));
+  gameType.add(controls.addCheckBox(GetString("Hitting_objects")));
+  gameType.add(controls.addCheckBox(GetString("Match_city_state")));
+  gameType.add(controls.addCheckBox(GetString("Match_color_text")));
+  gameType.add(controls.addCheckBox(GetString("Match_state_by_population")));
+  gameType.add(controls.addCheckBox(GetString("Sad_face")));
+  gameType.add(controls.addCheckBox(GetString("White_screen")));
+  gameType.add(controls.addCheckBox(GetString("Hit_Beaver")));
+  gameType.add(controls.addCheckBox(GetString("Plus_and_Minus")));
+  gameType.add(controls.addCheckBox(GetString("Five_different")));
+  
+  for(int i = 0; i < gameType.size(); ++i)
+    gameType.get(i).setSize(30, 30)
+                   .setPosition(width/2 + 250, height/5 + i * 35)
+                   .setVisible(false)
+                   .setText(gameType.get(i).getName())
+                   .setChecked();
   
   wellcomeScreenControls(true);                             
   
@@ -272,34 +246,25 @@ void addControls()
 //adds textfields for entering players names and keys
 void addTextfields()
 {
-  playersNamesAndKeys = new Textfield[maxPlayersNum*2];
+  playersNamesAndKeys = new TextBox[maxPlayersNum*2];
   float pomak = (height/1.4 -height/5)/10;
   for(int i = 0; i < maxPlayersNum*2; i+=2)
   {
-    playersNamesAndKeys[i] = controls.addTextfield(GetString("Player")+i/2)
+    playersNamesAndKeys[i] = controls.addTextBox(GetString("Player")+i/2)
                                      .setSize(width/10, height/30)
-                                     .setPosition(width*0.95/2 - width/10-400, height/5 + pomak * i / 2)
-                                     .setColorBackground(color(255, 255, 255))
-                                     .setFont(drawer.getControlFont(20))
-                                     .setColorValueLabel(color(0, 0, 0))
+                                     .setPosition(width/2 - width/10-400, height/5 + pomak * i / 2)
+                                     .setBackgroundColor(color(255, 255, 255))
+                                     .setFontColor(color(0, 0, 0))
                                      .setVisible(false)
                                      .setText(GetString("Name")+i/2);
-    playersNamesAndKeys[i].getCaptionLabel()
-                           .setFont(drawer.getButtonFont(15)).setColor(color(0, 0, 0))
-                           .align(ControlP5.LEFT_OUTSIDE, ControlP5.CENTER)
-                           .getStyle().setPaddingLeft(-30);
-    playersNamesAndKeys[i].getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
-    playersNamesAndKeys[i+1] = controls.addTextfield("Key"+i)
+                                     
+     playersNamesAndKeys[i+1] = controls.addTextBox("Key"+i)
                                        .setSize(width/10, height/30)
-                                       .setPosition(width*0.95/2 - 300, height/5 + pomak * i / 2)
-                                       .setColorBackground(color(255, 255, 255))
-                                       .setFont(drawer.getControlFont(20))
-                                       .setColorValueLabel(color(0, 0, 0))
-                                       //.setText(str(parseChar(int(random(65, 90)))))
+                                       .setPosition(width/2 - 300, height/5 + pomak * i / 2)
+                                       .setBackgroundColor(color(255, 255, 255))
+                                       .setFontColor(color(0, 0, 0))
                                        .setText(str(defaultPressingButtons[i/2]))
                                        .setVisible(false);
-    playersNamesAndKeys[i+1].getCaptionLabel().setFont(drawer.getButtonFont(10)).setVisible(false);
-    playersNamesAndKeys[i+1].getValueLabel().align(ControlP5.CENTER, ControlP5.CENTER);
   }
 }
 
@@ -309,7 +274,7 @@ void addTextfields()
 void drawHeading()
 {
   /////!!0.95 FIX!!why!
-  float startPosition = (width*0.95 - 6 * headingImg[0].width / 1.5 - headingImg[0].width) / 2;
+  float startPosition = (width - 6 * headingImg[0].width / 1.5 - headingImg[0].width) / 2;
   for(int i = 0; i < 7; ++i)
     image(headingImg[i], startPosition + i*headingImg[i].width/1.5, height/5);
 }
@@ -327,17 +292,17 @@ void loadImages()
 
 //what to do when back button is pressed
 //what to do whan forward button is pressed
-void controlEvent(ControlEvent theEvent)
-{
-  if(theEvent.getName().equals("forward"))
-    forwardBtnClick();
-  else if(theEvent.getName().equals("back"))
-    backBtnClick();
-  else if(theEvent.getName().equals(GetString("home")))
-    homeBtnClick();
-  else if(theEvent.getName().equals(GetString("newGame")))
-    newGameBtnClick();
-}
+//void controlEvent(ControlEvent theEvent)
+//{
+//  if(theEvent.getName().equals("forward"))
+//    forwardBtnClick();
+//  else if(theEvent.getName().equals("back"))
+//    backBtnClick();
+//  else if(theEvent.getName().equals(GetString("home")))
+//    homeBtnClick();
+//  else if(theEvent.getName().equals(GetString("newGame")))
+//    newGameBtnClick();
+//}
 
 public void newGameBtnClick()
 {
@@ -364,11 +329,11 @@ public void wellcomeScreenControls(boolean visible)
   backBtn.setVisible(visible);
   numberOfPlayersTF.setVisible(visible);
   //gameType.setVisible(visible);
-  if(!visible)
-  {
-    forwardBtn.hide();
-    backBtn.hide();
-  }
+  //if(!visible)
+  //{
+  //  forwardBtn.hide();
+  //  backBtn.hide();
+  //}
 }
 
 public void setupScreenControls(boolean visible)
@@ -377,23 +342,14 @@ public void setupScreenControls(boolean visible)
     playersNamesAndKeys[i].setVisible(visible);
   forwardBtn.setVisible(visible);
   backBtn.setVisible(visible); 
-  gameType.setVisible(visible);
-  if(!visible)
-  {
-    forwardBtn.hide();
-    backBtn.hide();
-  }
+  for(int i = 0; i < gameType.size(); ++i)
+    gameType.get(i).setVisible(visible);
 }
 
 public void endOfGameScreenControls(boolean visible)
 {
   homeBtn.setVisible(visible);
   newGameBtn.setVisible(visible);
-  if(!visible)
-  {
-    homeBtn.hide();
-    newGameBtn.hide();
-  }
 }
 
 
@@ -457,7 +413,7 @@ public void setPressBtnPositions()
   pressBtnPositionsX = new float[numberOfPlayers];
   int diff = 50;
   pressBtnHeight = height/30;
-  pressBtnWidth = (width*0.95 - (numberOfPlayers+1)*diff)/numberOfPlayers;
+  pressBtnWidth = (width - (numberOfPlayers+1)*diff)/numberOfPlayers;
   for(int i = 0; i < numberOfPlayers; ++i)
     pressBtnPositionsX[i] = (i+1)*diff+i*pressBtnWidth;
   pressBtnPositionY = 6*height/7;
@@ -480,16 +436,32 @@ public void backBtnClick()
 //and remoce placeholder if it is
 void mousePressed()
 {
-  for(int i = 0; i < numberOfPlayers * 2; i+=2)
-      if(playersNamesAndKeys[i].isFocus() && playersNamesAndKeys[i].getText().equals(GetString("Name")+i/2))
-         playersNamesAndKeys[i].setText("");
+  GUIElement pressedElement = controls.processClick();
+  if(pressedElement != null){
+    if(pressedElement.getName().equals("forward"))
+      forwardBtnClick();
+    else if(pressedElement.getName().equals("back"))
+      backBtnClick();
+    else if(pressedElement.getName().equals(GetString("home")))
+      homeBtnClick();
+    else if(pressedElement.getName().equals(GetString("newGame")))
+      newGameBtnClick();
+    try
+    {
+      if(pressedElement.getText().substring(0, 2).equals(GetString("Name").substring(0, 2))){
+        pressedElement.setText("");
+      }
+    }
+    catch(Exception e){}
+  }
+  
 }
 
 //returns which text filed is in focus
 int textFiledInFocus() 
 {
     for (int i = 1; i < numberOfPlayers*2; i+=2)
-      if (playersNamesAndKeys[i].isFocus())
+      if (playersNamesAndKeys[i].isFocus(controls))
         return i;
     return -1;
 }
@@ -527,6 +499,7 @@ void keyReleased()
  */
 void keyPressed()
 {
+  controls.keyPressed();
   if(playGameScreen)
   {
     for(int i = 0; i < numberOfPlayers; ++i)

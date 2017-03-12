@@ -140,14 +140,14 @@ void draw()
   if(wellcomeScreen)
   {
     drawHeading();
-    drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width*0.95/2, height/2.2);
-    drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
+    drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width/2, height/2.2);
+    drawer.drawText(error, 25, color(255, 0, 0), width/2, height*6/7);
   }
   else if(setupScreen)
   {
-    drawer.drawText(GetString("playersName"), 25, color(0, 0, 0), width*0.95/2 - 350, height/6);
-    drawer.drawText(GetString("gameType"), 25, color(0, 0, 0), width*0.95/2 + 350, height/6);
-    drawer.drawText(error, 25, color(255, 0, 0), width*0.95/2, height*6/7);
+    drawer.drawText(GetString("playersName"), 25, color(0, 0, 0), width/2 - 350, height/6);
+    drawer.drawText(GetString("gameType"), 25, color(0, 0, 0), width/2 + 350, height/6);
+    drawer.drawText(error, 25, color(255, 0, 0), width/2, height*6/7);
   }
   else if(playGameScreen)
   {
@@ -182,7 +182,7 @@ void draw()
   {
     for(int i = 0; i < numberOfPlayers; ++i)
       drawer.drawText(players[i].name + " ----> " + players[i].score, 
-                                      20, color(0, 0, 0), width*0.95/2, (height/1.4 -height/5)/10*i + height/5);
+                                      20, color(0, 0, 0), width/2, (height/1.4 -height/5)/10*i + height/5);
     endOfGameScreenControls(true);
   }
     
@@ -194,47 +194,47 @@ void addControls()
   //controls.setFont(drawer.getControlFont(20));
   forwardBtn = controls.addButton("forward")
                     .setSize(width/15, height/15)
-                    .setPosition(width*0.95/2 + 400, height/1.3)
+                    .setPosition(width/2 + 400, height/1.3)
                     .setImage(loadImage("images/forward.png"))
                     .setVisible(false);
   backBtn = controls.addButton("back")
                     .setSize(width/15, height/15)
-                    .setPosition(width*0.95/2 - 500, height/1.3)
+                    .setPosition(width/2 - 500, height/1.3)
                     .setImage(loadImage("images/back.png"))
                     .setVisible(false);  
   
   newGameBtn = controls.addButton(GetString("newGame"))
                        .setSize(width/15, height/15)
-                       .setPosition(width*0.95/2 - 200 - width/15 , 4*height/5)
+                       .setPosition(width/2 - 200 - width/15 , 4*height/5)
                        .setVisible(false)
                        .setText(GetString("newGame"));
   homeBtn = controls.addButton(GetString("home"))
                        .setSize(width/15, height/15)
-                       .setPosition(width*0.95/2 + 200, 4*height/5)
+                       .setPosition(width/2 + 200, 4*height/5)
                        .setVisible(false)
                        .setText(GetString("home"));
   numberOfPlayersTF = controls.addTextBox("")
                                .setSize(width/15, height/20)
-                               .setPosition(width*0.95/2 - width/30, height/2)
+                               .setPosition(width/2 - width/30, height/2)
                                .setBackgroundColor(color(255, 255, 255))
                                .setFontColor(color(0, 0, 0))
                                .setVisible(false);
                                
   
-  gameType.add(controls.addCheckBox("Equation"));
-  gameType.add(controls.addCheckBox("Hitting_objects"));
-  gameType.add(controls.addCheckBox("Match_city_state"));
-  gameType.add(controls.addCheckBox("Match_color_text"));
-  gameType.add(controls.addCheckBox("Match_state_by_population"));
-  gameType.add(controls.addCheckBox("Sad_face"));
-  gameType.add(controls.addCheckBox("White_screen"));
-  gameType.add(controls.addCheckBox("Hit_Beaver"));
-  gameType.add(controls.addCheckBox("Plus_and_Minus"));
-  gameType.add(controls.addCheckBox("Five_different"));
+  gameType.add(controls.addCheckBox(GetString("Equation")));
+  gameType.add(controls.addCheckBox(GetString("Hitting_objects")));
+  gameType.add(controls.addCheckBox(GetString("Match_city_state")));
+  gameType.add(controls.addCheckBox(GetString("Match_color_text")));
+  gameType.add(controls.addCheckBox(GetString("Match_state_by_population")));
+  gameType.add(controls.addCheckBox(GetString("Sad_face")));
+  gameType.add(controls.addCheckBox(GetString("White_screen")));
+  gameType.add(controls.addCheckBox(GetString("Hit_Beaver")));
+  gameType.add(controls.addCheckBox(GetString("Plus_and_Minus")));
+  gameType.add(controls.addCheckBox(GetString("Five_different")));
   
   for(int i = 0; i < gameType.size(); ++i)
     gameType.get(i).setSize(30, 30)
-                   .setPosition(width*0.95/2 + 250, height/5 + i * 35)
+                   .setPosition(width/2 + 250, height/5 + i * 35)
                    .setVisible(false)
                    .setText(gameType.get(i).getName())
                    .setChecked();
@@ -252,7 +252,7 @@ void addTextfields()
   {
     playersNamesAndKeys[i] = controls.addTextBox(GetString("Player")+i/2)
                                      .setSize(width/10, height/30)
-                                     .setPosition(width*0.95/2 - width/10-400, height/5 + pomak * i / 2)
+                                     .setPosition(width/2 - width/10-400, height/5 + pomak * i / 2)
                                      .setBackgroundColor(color(255, 255, 255))
                                      .setFontColor(color(0, 0, 0))
                                      .setVisible(false)
@@ -260,7 +260,7 @@ void addTextfields()
                                      
      playersNamesAndKeys[i+1] = controls.addTextBox("Key"+i)
                                        .setSize(width/10, height/30)
-                                       .setPosition(width*0.95/2 - 300, height/5 + pomak * i / 2)
+                                       .setPosition(width/2 - 300, height/5 + pomak * i / 2)
                                        .setBackgroundColor(color(255, 255, 255))
                                        .setFontColor(color(0, 0, 0))
                                        .setText(str(defaultPressingButtons[i/2]))
@@ -274,7 +274,7 @@ void addTextfields()
 void drawHeading()
 {
   /////!!0.95 FIX!!why!
-  float startPosition = (width*0.95 - 6 * headingImg[0].width / 1.5 - headingImg[0].width) / 2;
+  float startPosition = (width - 6 * headingImg[0].width / 1.5 - headingImg[0].width) / 2;
   for(int i = 0; i < 7; ++i)
     image(headingImg[i], startPosition + i*headingImg[i].width/1.5, height/5);
 }
@@ -413,7 +413,7 @@ public void setPressBtnPositions()
   pressBtnPositionsX = new float[numberOfPlayers];
   int diff = 50;
   pressBtnHeight = height/30;
-  pressBtnWidth = (width*0.95 - (numberOfPlayers+1)*diff)/numberOfPlayers;
+  pressBtnWidth = (width - (numberOfPlayers+1)*diff)/numberOfPlayers;
   for(int i = 0; i < numberOfPlayers; ++i)
     pressBtnPositionsX[i] = (i+1)*diff+i*pressBtnWidth;
   pressBtnPositionY = 6*height/7;
