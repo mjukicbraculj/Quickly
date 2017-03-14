@@ -12,6 +12,7 @@ class Button extends GUIElement{
         image(backgroundImage, x, y);
       else{
         fill(backgroundColor);
+        rectMode(CORNER);
         rect(x, y, width, height);
       }
       fill(fontColor);
