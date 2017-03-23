@@ -44,7 +44,7 @@ char defaultPressingButtons[] = {'Q', 'P', 'Y', 'M', 'A', 'L', 'Z', 'H', 'B', '1
 int playersKeysCodes[] = {int('Q'), int('P'), int('Y'), int('M'), int('A'), int('L'), int('Z'), int('H'), int('B'), int('1'), int('9')};
 
 
-void fileExist() 
+void fileWithPlayersExist() 
 {
   try {
     readPlayers = ResourceBundle.getBundle(bundleNamePlayers, Locale.getDefault(), new ProcessingClassLoader(this));
@@ -60,6 +60,7 @@ void setup()
   frameRate(60);
   //res = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new ProcessingClassLoader(this));
   res = ResourceBundle.getBundle(bundleName, new Locale("hr"), new ProcessingClassLoader(this));
+  fileWithPlayersExist();
   //size(1500, 1000);
   drawer = new Drawer();
   controls = new GUI();
