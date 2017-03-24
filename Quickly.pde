@@ -458,6 +458,7 @@ public void forwardBtnClick()
   if(wellcomeScreen)
   {
     if(loadPlayersFromFile.isChecked()) {
+      fileWithPlayersExist();
       if(loadPlayers()) {
         error = "";
         wellcomeScreen = false;
@@ -493,19 +494,26 @@ public void forwardBtnClick()
   }
   else
   {
-    for(int i = 0; i < numberOfPlayers; ++i)
+    StringList usedKeys = new StringList();
+    for(int i = 0; i < numberOfPlayers; ++i) {
       if(playersNamesAndKeys[i*2+1].getText().equals(""))
        {
          error = GetString("keysError");
          return;
        }
+       if(usedKeys.hasValue(playersNamesAndKeys[i*2+1].getText())){
+         error = GetString("keyInUse");
+         return;
+       }
+       usedKeys.append(playersNamesAndKeys[i*2+1].getText());
+    }
     error = "";
     setupScreen = false;
     setupScreenControls(false);
     createGames();
     playGameScreen = true;
     for(int i = 0; i < numberOfPlayers; i++){
-      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playersKeysCodes[i]);
+      players[i] = new Player(playersNamesAndKeys[i*2].getText(), int(playersNamesAndKeys[i*2+1].getText().charAt(0)));
     }
     correspondingBtn = new int[numberOfPlayers];
     for(int i = 0; i < numberOfPlayers; ++i)
