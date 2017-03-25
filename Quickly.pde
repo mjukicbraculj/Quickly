@@ -37,6 +37,8 @@ static ResourceBundle res;
 String bundleName = "language";
 static ResourceBundle readPlayers;
 String bundleNamePlayers = "players";
+// Used for checing if we already wrote game result in file
+boolean flagWritenFile = false;
 
 StringDict specialKeys;
 
@@ -83,7 +85,6 @@ void setup()
   //for HittingObject game
   RG.init(this);
   inicialiseSpecialKeysDictionary();
-
 }
 
 
@@ -199,9 +200,20 @@ void draw()
   }
   else if(endOfGameScreen)
   {
-    for(int i = 0; i < numberOfPlayers; ++i)
-      drawer.drawText(players[i].name + " ----> " + players[i].score, 
-                                      20, color(0, 0, 0), width/2, (height/1.4 -height/5)/10*i + height/5);
+  
+    if(flagWritenFile == false) {
+      PrintWriter output = createWriter("results/result" + str(hour()) + ":" + str(minute()) + ".txt"); 
+      output.println(GetString("resultAfter") + str(hour()) + ":" + str(minute()));
+      for(int i = 0; i < numberOfPlayers; ++i)
+        output.println(players[i].name + " --> " + players[i].score);
+      output.flush(); // Writes the remaining data to the file
+      output.close(); // Finishes the file
+      flagWritenFile = true;
+    }
+    for(int i = 0; i < numberOfPlayers; ++i) {
+        drawer.drawText(players[i].name + " ----> " + players[i].score, 
+                                        20, color(0, 0, 0), width/2, (height/1.4 -height/5)/10*i + height/5);
+    }
     endOfGameScreenControls(true);
   }
     
@@ -340,6 +352,7 @@ public void newGameBtnClick()
   createGames(); 
   currentGame = 0;
   endOfGameScreenControls(false);
+  flagWritenFile = false;
 }
 
 public void homeBtnClick()
@@ -347,6 +360,7 @@ public void homeBtnClick()
   wellcomeScreen = true;
   wellcomeScreenControls(true);
   endOfGameScreenControls(false);
+  flagWritenFile = false;
 }
 
 public void wellcomeScreenControls(boolean visible)
