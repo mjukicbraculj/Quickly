@@ -126,25 +126,25 @@ public static String GetString(String key)
 public void createGames()
 {
   if(gameType.get(0).isChecked())
-    games.add(new Equation(4, numberOfPlayers));
+    games.add(new Equation(10, numberOfPlayers));
   if(gameType.get(1).isChecked())
-    games.add(new HittingObjects(4, numberOfPlayers, false));
+    games.add(new HittingObjects(10, numberOfPlayers, false));
   if(gameType.get(2).isChecked())
-    games.add(new MatchCityState(4, numberOfPlayers));
+    games.add(new MatchCityState(10, numberOfPlayers));
   if(gameType.get(3).isChecked())
-    games.add(new MatchColorText(4, numberOfPlayers));
+    games.add(new MatchColorText(10, numberOfPlayers));
   if(gameType.get(4).isChecked())
-    games.add(new MatchStatesByPopulation(4, numberOfPlayers));
+    games.add(new MatchStatesByPopulation(10, numberOfPlayers));
   if(gameType.get(5).isChecked())
-    games.add(new SadFace(4, numberOfPlayers));
+    games.add(new SadFace(10, numberOfPlayers));
   if(gameType.get(6).isChecked())
-    games.add(new WhiteScreen(4, numberOfPlayers));
+    games.add(new WhiteScreen(10, numberOfPlayers));
   if(gameType.get(7).isChecked())
-    games.add(new HitBeaver(4, numberOfPlayers));
+    games.add(new HitBeaver(10, numberOfPlayers));
   if(gameType.get(8).isChecked())
-    games.add(new PlusMinus(4, numberOfPlayers));
+    games.add(new PlusMinus(10, numberOfPlayers));
   if(gameType.get(9).isChecked())
-    games.add(new FiveDifferent(4, numberOfPlayers));
+    games.add(new FiveDifferent(10, numberOfPlayers));
   
 }
 

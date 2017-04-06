@@ -9,6 +9,7 @@ GUI controls;    //for adding controls
 Button forwardBtn, backBtn, homeBtn, newGameBtn;
 //RadioButton gameType;
 ArrayList<CheckBox> gameType;
+CheckBox loadPlayersFromFile;
 TextBox numberOfPlayersTF;
 TextBox[] playersNamesAndKeys;    
 PImage[] headingImg;
@@ -29,11 +30,15 @@ int numberOfPlayers;
 String error;
 ArrayList<Game> games;
 int currentGame;
-
+boolean fileForPlayersExist = true;
 
 static Locale locale;
 static ResourceBundle res;
 String bundleName = "language";
+static ResourceBundle readPlayers;
+String bundleNamePlayers = "players";
+// Used for checing if we already wrote game result in file
+boolean flagWritenFile = false;
 
 StringDict specialKeys;
 
@@ -41,12 +46,23 @@ char defaultPressingButtons[] = {'Q', 'P', 'Y', 'M', 'A', 'L', 'Z', 'H', 'B', '1
 int playersKeysCodes[] = {int('Q'), int('P'), int('Y'), int('M'), int('A'), int('L'), int('Z'), int('H'), int('B'), int('1'), int('9')};
 
 
+void fileWithPlayersExist() 
+{
+  try {
+    readPlayers = ResourceBundle.getBundle(bundleNamePlayers, Locale.getDefault(), new ProcessingClassLoader(this));
+  }
+  catch(Exception e) {
+    fileForPlayersExist = false;
+  }
+}
+
 void setup()
 {
   fullScreen();
   frameRate(60);
   //res = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new ProcessingClassLoader(this));
   res = ResourceBundle.getBundle(bundleName, new Locale("hr"), new ProcessingClassLoader(this));
+  fileWithPlayersExist();
   //size(1500, 1000);
   drawer = new Drawer();
   controls = new GUI();
@@ -69,7 +85,6 @@ void setup()
   //for HittingObject game
   RG.init(this);
   inicialiseSpecialKeysDictionary();
-
 }
 
 
@@ -111,25 +126,25 @@ public static String GetString(String key)
 public void createGames()
 {
   if(gameType.get(0).isChecked())
-    games.add(new Equation(4, numberOfPlayers));
+    games.add(new Equation(10, numberOfPlayers));
   if(gameType.get(1).isChecked())
-    games.add(new HittingObjects(4, numberOfPlayers, false));
+    games.add(new HittingObjects(10, numberOfPlayers, false));
   if(gameType.get(2).isChecked())
-    games.add(new MatchCityState(4, numberOfPlayers));
+    games.add(new MatchCityState(10, numberOfPlayers));
   if(gameType.get(3).isChecked())
-    games.add(new MatchColorText(4, numberOfPlayers));
+    games.add(new MatchColorText(10, numberOfPlayers));
   if(gameType.get(4).isChecked())
-    games.add(new MatchStatesByPopulation(4, numberOfPlayers));
+    games.add(new MatchStatesByPopulation(10, numberOfPlayers));
   if(gameType.get(5).isChecked())
-    games.add(new SadFace(4, numberOfPlayers));
+    games.add(new SadFace(10, numberOfPlayers));
   if(gameType.get(6).isChecked())
-    games.add(new WhiteScreen(4, numberOfPlayers));
+    games.add(new WhiteScreen(10, numberOfPlayers));
   if(gameType.get(7).isChecked())
-    games.add(new HitBeaver(4, numberOfPlayers));
+    games.add(new HitBeaver(10, numberOfPlayers));
   if(gameType.get(8).isChecked())
-    games.add(new PlusMinus(4, numberOfPlayers));
+    games.add(new PlusMinus(10, numberOfPlayers));
   if(gameType.get(9).isChecked())
-    games.add(new FiveDifferent(4, numberOfPlayers));
+    games.add(new FiveDifferent(10, numberOfPlayers));
   
 }
 
@@ -140,7 +155,12 @@ void draw()
   if(wellcomeScreen)
   {
     drawHeading();
-    drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width/2, height/2.2);
+    if(loadPlayersFromFile.isChecked())
+      numberOfPlayersTF.setVisible(false);
+    else {
+      numberOfPlayersTF.setVisible(true);
+      drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width/2, height/2.2);
+    }
     drawer.drawText(error, 25, color(255, 0, 0), width/2, height*6/7);
   }
   else if(setupScreen)
@@ -180,9 +200,20 @@ void draw()
   }
   else if(endOfGameScreen)
   {
-    for(int i = 0; i < numberOfPlayers; ++i)
-      drawer.drawText(players[i].name + " ----> " + players[i].score, 
-                                      20, color(0, 0, 0), width/2, (height/1.4 -height/5)/10*i + height/5);
+  
+    if(flagWritenFile == false) {
+      PrintWriter output = createWriter("results/result" + str(hour()) + ":" + str(minute()) + ".txt"); 
+      output.println(GetString("resultAfter") + str(hour()) + ":" + str(minute()));
+      for(int i = 0; i < numberOfPlayers; ++i)
+        output.println(players[i].name + " --> " + players[i].score);
+      output.flush(); // Writes the remaining data to the file
+      output.close(); // Finishes the file
+      flagWritenFile = true;
+    }
+    for(int i = 0; i < numberOfPlayers; ++i) {
+        drawer.drawText(players[i].name + " ----> " + players[i].score, 
+                                        20, color(0, 0, 0), width/2, (height/1.4 -height/5)/10*i + height/5);
+    }
     endOfGameScreenControls(true);
   }
     
@@ -220,6 +251,13 @@ void addControls()
                                .setFontColor(color(0, 0, 0))
                                .setVisible(false);
                                
+  loadPlayersFromFile = controls.addCheckBox(GetString("LoadPlayersFromFile"));
+  loadPlayersFromFile.textPosition = "down";
+  loadPlayersFromFile.setSize(width/30, width/30)
+                     .setPosition(width/2 - 30, height/1.3)
+                     .setVisible(false)
+                     .setText(GetString("LoadPlayersFromFile"))
+                     .setChecked();
   
   gameType.add(controls.addCheckBox(GetString("Equation")));
   gameType.add(controls.addCheckBox(GetString("Hitting_objects")));
@@ -256,7 +294,7 @@ void addTextfields()
                                      .setBackgroundColor(color(255, 255, 255))
                                      .setFontColor(color(0, 0, 0))
                                      .setVisible(false)
-                                     .setText(GetString("Name")+i/2);
+                                     .setText(GetString("Name")+(i/2+1));
                                      
      playersNamesAndKeys[i+1] = controls.addTextBox("Key"+i)
                                        .setSize(width/10, height/30)
@@ -314,6 +352,7 @@ public void newGameBtnClick()
   createGames(); 
   currentGame = 0;
   endOfGameScreenControls(false);
+  flagWritenFile = false;
 }
 
 public void homeBtnClick()
@@ -321,6 +360,7 @@ public void homeBtnClick()
   wellcomeScreen = true;
   wellcomeScreenControls(true);
   endOfGameScreenControls(false);
+  flagWritenFile = false;
 }
 
 public void wellcomeScreenControls(boolean visible)
@@ -328,6 +368,10 @@ public void wellcomeScreenControls(boolean visible)
   forwardBtn.setVisible(visible);
   backBtn.setVisible(visible);
   numberOfPlayersTF.setVisible(visible);
+  if(fileForPlayersExist)
+    loadPlayersFromFile.setVisible(visible);
+  else
+    loadPlayersFromFile.isChecked = false;
   //gameType.setVisible(visible);
   //if(!visible)
   //{
@@ -353,6 +397,73 @@ public void endOfGameScreenControls(boolean visible)
 }
 
 
+private boolean readNumberOfPlayers()
+{
+  try {
+    String value = readPlayers.getString("numberOfPlayers");
+    numberOfPlayers = Integer.parseInt(value);
+  }
+  catch (Exception e)
+  {
+    error = GetString("FilePlayerNumberError");
+    return false;
+  }
+  
+  return true;    
+}
+
+private String loadPlayerName(int playerNumber)
+{
+  String value = null;
+  try
+  {
+    value = readPlayers.getString("player" + playerNumber);
+  }
+  catch (Exception e)
+  {
+    value = GetString("player")+playerNumber;
+  }
+  return value; 
+}
+
+private String loadPlayerKey(int playerNumber)
+{
+  String value = null;
+  try
+  {
+    value = readPlayers.getString("button" + playerNumber);
+    value = value.toUpperCase();
+    if(value.length() > 1)
+      value = str(value.charAt(0));
+  }
+  catch (Exception e)
+  {
+    value = str(defaultPressingButtons[playerNumber]);
+  }
+  return value; 
+}
+
+
+private boolean loadPlayers()
+{
+  if(readNumberOfPlayers() == false)
+    return false;
+  if(numberOfPlayers < 1 || numberOfPlayers > 10)
+  {
+    numberOfPlayers = 0;
+    error = GetString("intervalError");
+    return false;
+  }
+  players = new Player[numberOfPlayers];
+  int playerNumber = 1;
+  for(int i = 0; i<numberOfPlayers * 2; i+=2) {
+    playersNamesAndKeys[i].setText(loadPlayerName(playerNumber));
+    playersNamesAndKeys[i+1].setText(loadPlayerKey(playerNumber));   
+    playerNumber++;
+  }    
+  
+  return true;
+}
 
 //method hides first screen and drows second(setup)
 //or hides second and drows third(playing)
@@ -360,44 +471,63 @@ public void forwardBtnClick()
 {
   if(wellcomeScreen)
   {
-    try
-    {
-      numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
-      if(numberOfPlayers < 0 || numberOfPlayers > 10)
-      {
-        numberOfPlayers = 0;
-        error = GetString("intervalError");
-        return;
+    if(loadPlayersFromFile.isChecked()) {
+      fileWithPlayersExist();
+      if(loadPlayers()) {
+        error = "";
+        wellcomeScreen = false;
+        wellcomeScreenControls(false);
+        setupScreen = true;
+        setPressBtnPositions();
+        setupScreenControls(true);
       }
-      error = "";
-      wellcomeScreen = false;
-      wellcomeScreenControls(false);
-      setupScreen = true;
-      players = new Player[numberOfPlayers];
-      setPressBtnPositions();
-      setupScreenControls(true);
     }
-    catch(Exception e)
-    {
-      error = GetString("numberOfPlayersError");
+    else {
+      try
+      {
+        numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
+        if(numberOfPlayers < 1 || numberOfPlayers > 10)
+        {
+          numberOfPlayers = 0;
+          error = GetString("intervalError");
+          return;
+        }
+        error = "";
+        wellcomeScreen = false;
+        wellcomeScreenControls(false);
+        setupScreen = true;
+        players = new Player[numberOfPlayers];
+        setPressBtnPositions();
+        setupScreenControls(true);
+      }
+      catch(Exception e)
+      {
+        error = GetString("numberOfPlayersError");
+      }
     }
-    
   }
   else
   {
-    for(int i = 0; i < numberOfPlayers; ++i)
+    StringList usedKeys = new StringList();
+    for(int i = 0; i < numberOfPlayers; ++i) {
       if(playersNamesAndKeys[i*2+1].getText().equals(""))
        {
          error = GetString("keysError");
          return;
        }
+       if(usedKeys.hasValue(playersNamesAndKeys[i*2+1].getText())){
+         error = GetString("keyInUse");
+         return;
+       }
+       usedKeys.append(playersNamesAndKeys[i*2+1].getText());
+    }
     error = "";
     setupScreen = false;
     setupScreenControls(false);
     createGames();
     playGameScreen = true;
     for(int i = 0; i < numberOfPlayers; i++){
-      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playersKeysCodes[i]);
+      players[i] = new Player(playersNamesAndKeys[i*2].getText(), int(playersNamesAndKeys[i*2+1].getText().charAt(0)));
     }
     correspondingBtn = new int[numberOfPlayers];
     for(int i = 0; i < numberOfPlayers; ++i)

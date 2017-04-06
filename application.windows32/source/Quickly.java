@@ -33,6 +33,7 @@ GUI controls;    //for adding controls
 Button forwardBtn, backBtn, homeBtn, newGameBtn;
 //RadioButton gameType;
 ArrayList<CheckBox> gameType;
+CheckBox loadPlayersFromFile;
 TextBox numberOfPlayersTF;
 TextBox[] playersNamesAndKeys;    
 PImage[] headingImg;
@@ -53,11 +54,15 @@ int numberOfPlayers;
 String error;
 ArrayList<Game> games;
 int currentGame;
-
+boolean fileForPlayersExist = true;
 
 static Locale locale;
 static ResourceBundle res;
 String bundleName = "language";
+static ResourceBundle readPlayers;
+String bundleNamePlayers = "players";
+// Used for checing if we already wrote game result in file
+boolean flagWritenFile = false;
 
 StringDict specialKeys;
 
@@ -65,12 +70,23 @@ char defaultPressingButtons[] = {'Q', 'P', 'Y', 'M', 'A', 'L', 'Z', 'H', 'B', '1
 int playersKeysCodes[] = {PApplet.parseInt('Q'), PApplet.parseInt('P'), PApplet.parseInt('Y'), PApplet.parseInt('M'), PApplet.parseInt('A'), PApplet.parseInt('L'), PApplet.parseInt('Z'), PApplet.parseInt('H'), PApplet.parseInt('B'), PApplet.parseInt('1'), PApplet.parseInt('9')};
 
 
+public void fileWithPlayersExist() 
+{
+  try {
+    readPlayers = ResourceBundle.getBundle(bundleNamePlayers, Locale.getDefault(), new ProcessingClassLoader(this));
+  }
+  catch(Exception e) {
+    fileForPlayersExist = false;
+  }
+}
+
 public void setup()
 {
   
   frameRate(60);
   //res = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new ProcessingClassLoader(this));
   res = ResourceBundle.getBundle(bundleName, new Locale("hr"), new ProcessingClassLoader(this));
+  fileWithPlayersExist();
   //size(1500, 1000);
   drawer = new Drawer();
   controls = new GUI();
@@ -93,7 +109,6 @@ public void setup()
   //for HittingObject game
   RG.init(this);
   inicialiseSpecialKeysDictionary();
-
 }
 
 
@@ -135,25 +150,25 @@ public static String GetString(String key)
 public void createGames()
 {
   if(gameType.get(0).isChecked())
-    games.add(new Equation(4, numberOfPlayers));
+    games.add(new Equation(10, numberOfPlayers));
   if(gameType.get(1).isChecked())
-    games.add(new HittingObjects(4, numberOfPlayers, false));
+    games.add(new HittingObjects(10, numberOfPlayers, false));
   if(gameType.get(2).isChecked())
-    games.add(new MatchCityState(4, numberOfPlayers));
+    games.add(new MatchCityState(10, numberOfPlayers));
   if(gameType.get(3).isChecked())
-    games.add(new MatchColorText(4, numberOfPlayers));
+    games.add(new MatchColorText(10, numberOfPlayers));
   if(gameType.get(4).isChecked())
-    games.add(new MatchStatesByPopulation(4, numberOfPlayers));
+    games.add(new MatchStatesByPopulation(10, numberOfPlayers));
   if(gameType.get(5).isChecked())
-    games.add(new SadFace(4, numberOfPlayers));
+    games.add(new SadFace(10, numberOfPlayers));
   if(gameType.get(6).isChecked())
-    games.add(new WhiteScreen(4, numberOfPlayers));
+    games.add(new WhiteScreen(10, numberOfPlayers));
   if(gameType.get(7).isChecked())
-    games.add(new HitBeaver(4, numberOfPlayers));
+    games.add(new HitBeaver(10, numberOfPlayers));
   if(gameType.get(8).isChecked())
-    games.add(new PlusMinus(4, numberOfPlayers));
+    games.add(new PlusMinus(10, numberOfPlayers));
   if(gameType.get(9).isChecked())
-    games.add(new FiveDifferent(4, numberOfPlayers));
+    games.add(new FiveDifferent(10, numberOfPlayers));
   
 }
 
@@ -164,7 +179,12 @@ public void draw()
   if(wellcomeScreen)
   {
     drawHeading();
-    drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width/2, height/2.2f);
+    if(loadPlayersFromFile.isChecked())
+      numberOfPlayersTF.setVisible(false);
+    else {
+      numberOfPlayersTF.setVisible(true);
+      drawer.drawText(GetString("numberOfPlayers"), 25, color(0, 0, 0), width/2, height/2.2f);
+    }
     drawer.drawText(error, 25, color(255, 0, 0), width/2, height*6/7);
   }
   else if(setupScreen)
@@ -204,9 +224,20 @@ public void draw()
   }
   else if(endOfGameScreen)
   {
-    for(int i = 0; i < numberOfPlayers; ++i)
-      drawer.drawText(players[i].name + " ----> " + players[i].score, 
-                                      20, color(0, 0, 0), width/2, (height/1.4f -height/5)/10*i + height/5);
+  
+    if(flagWritenFile == false) {
+      PrintWriter output = createWriter("results/result" + str(hour()) + ":" + str(minute()) + ".txt"); 
+      output.println(GetString("resultAfter") + str(hour()) + ":" + str(minute()));
+      for(int i = 0; i < numberOfPlayers; ++i)
+        output.println(players[i].name + " --> " + players[i].score);
+      output.flush(); // Writes the remaining data to the file
+      output.close(); // Finishes the file
+      flagWritenFile = true;
+    }
+    for(int i = 0; i < numberOfPlayers; ++i) {
+        drawer.drawText(players[i].name + " ----> " + players[i].score, 
+                                        20, color(0, 0, 0), width/2, (height/1.4f -height/5)/10*i + height/5);
+    }
     endOfGameScreenControls(true);
   }
     
@@ -244,6 +275,13 @@ public void addControls()
                                .setFontColor(color(0, 0, 0))
                                .setVisible(false);
                                
+  loadPlayersFromFile = controls.addCheckBox(GetString("LoadPlayersFromFile"));
+  loadPlayersFromFile.textPosition = "down";
+  loadPlayersFromFile.setSize(width/30, width/30)
+                     .setPosition(width/2 - 30, height/1.3f)
+                     .setVisible(false)
+                     .setText(GetString("LoadPlayersFromFile"))
+                     .setChecked();
   
   gameType.add(controls.addCheckBox(GetString("Equation")));
   gameType.add(controls.addCheckBox(GetString("Hitting_objects")));
@@ -280,7 +318,7 @@ public void addTextfields()
                                      .setBackgroundColor(color(255, 255, 255))
                                      .setFontColor(color(0, 0, 0))
                                      .setVisible(false)
-                                     .setText(GetString("Name")+i/2);
+                                     .setText(GetString("Name")+(i/2+1));
                                      
      playersNamesAndKeys[i+1] = controls.addTextBox("Key"+i)
                                        .setSize(width/10, height/30)
@@ -338,6 +376,7 @@ public void newGameBtnClick()
   createGames(); 
   currentGame = 0;
   endOfGameScreenControls(false);
+  flagWritenFile = false;
 }
 
 public void homeBtnClick()
@@ -345,6 +384,7 @@ public void homeBtnClick()
   wellcomeScreen = true;
   wellcomeScreenControls(true);
   endOfGameScreenControls(false);
+  flagWritenFile = false;
 }
 
 public void wellcomeScreenControls(boolean visible)
@@ -352,6 +392,10 @@ public void wellcomeScreenControls(boolean visible)
   forwardBtn.setVisible(visible);
   backBtn.setVisible(visible);
   numberOfPlayersTF.setVisible(visible);
+  if(fileForPlayersExist)
+    loadPlayersFromFile.setVisible(visible);
+  else
+    loadPlayersFromFile.isChecked = false;
   //gameType.setVisible(visible);
   //if(!visible)
   //{
@@ -377,6 +421,73 @@ public void endOfGameScreenControls(boolean visible)
 }
 
 
+private boolean readNumberOfPlayers()
+{
+  try {
+    String value = readPlayers.getString("numberOfPlayers");
+    numberOfPlayers = Integer.parseInt(value);
+  }
+  catch (Exception e)
+  {
+    error = GetString("FilePlayerNumberError");
+    return false;
+  }
+  
+  return true;    
+}
+
+private String loadPlayerName(int playerNumber)
+{
+  String value = null;
+  try
+  {
+    value = readPlayers.getString("player" + playerNumber);
+  }
+  catch (Exception e)
+  {
+    value = GetString("player")+playerNumber;
+  }
+  return value; 
+}
+
+private String loadPlayerKey(int playerNumber)
+{
+  String value = null;
+  try
+  {
+    value = readPlayers.getString("button" + playerNumber);
+    value = value.toUpperCase();
+    if(value.length() > 1)
+      value = str(value.charAt(0));
+  }
+  catch (Exception e)
+  {
+    value = str(defaultPressingButtons[playerNumber]);
+  }
+  return value; 
+}
+
+
+private boolean loadPlayers()
+{
+  if(readNumberOfPlayers() == false)
+    return false;
+  if(numberOfPlayers < 1 || numberOfPlayers > 10)
+  {
+    numberOfPlayers = 0;
+    error = GetString("intervalError");
+    return false;
+  }
+  players = new Player[numberOfPlayers];
+  int playerNumber = 1;
+  for(int i = 0; i<numberOfPlayers * 2; i+=2) {
+    playersNamesAndKeys[i].setText(loadPlayerName(playerNumber));
+    playersNamesAndKeys[i+1].setText(loadPlayerKey(playerNumber));   
+    playerNumber++;
+  }    
+  
+  return true;
+}
 
 //method hides first screen and drows second(setup)
 //or hides second and drows third(playing)
@@ -384,44 +495,63 @@ public void forwardBtnClick()
 {
   if(wellcomeScreen)
   {
-    try
-    {
-      numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
-      if(numberOfPlayers < 0 || numberOfPlayers > 10)
-      {
-        numberOfPlayers = 0;
-        error = GetString("intervalError");
-        return;
+    if(loadPlayersFromFile.isChecked()) {
+      fileWithPlayersExist();
+      if(loadPlayers()) {
+        error = "";
+        wellcomeScreen = false;
+        wellcomeScreenControls(false);
+        setupScreen = true;
+        setPressBtnPositions();
+        setupScreenControls(true);
       }
-      error = "";
-      wellcomeScreen = false;
-      wellcomeScreenControls(false);
-      setupScreen = true;
-      players = new Player[numberOfPlayers];
-      setPressBtnPositions();
-      setupScreenControls(true);
     }
-    catch(Exception e)
-    {
-      error = GetString("numberOfPlayersError");
+    else {
+      try
+      {
+        numberOfPlayers = Integer.parseInt(numberOfPlayersTF.getText());
+        if(numberOfPlayers < 1 || numberOfPlayers > 10)
+        {
+          numberOfPlayers = 0;
+          error = GetString("intervalError");
+          return;
+        }
+        error = "";
+        wellcomeScreen = false;
+        wellcomeScreenControls(false);
+        setupScreen = true;
+        players = new Player[numberOfPlayers];
+        setPressBtnPositions();
+        setupScreenControls(true);
+      }
+      catch(Exception e)
+      {
+        error = GetString("numberOfPlayersError");
+      }
     }
-    
   }
   else
   {
-    for(int i = 0; i < numberOfPlayers; ++i)
+    StringList usedKeys = new StringList();
+    for(int i = 0; i < numberOfPlayers; ++i) {
       if(playersNamesAndKeys[i*2+1].getText().equals(""))
        {
          error = GetString("keysError");
          return;
        }
+       if(usedKeys.hasValue(playersNamesAndKeys[i*2+1].getText())){
+         error = GetString("keyInUse");
+         return;
+       }
+       usedKeys.append(playersNamesAndKeys[i*2+1].getText());
+    }
     error = "";
     setupScreen = false;
     setupScreenControls(false);
     createGames();
     playGameScreen = true;
     for(int i = 0; i < numberOfPlayers; i++){
-      players[i] = new Player(playersNamesAndKeys[i*2].getText(), playersKeysCodes[i]);
+      players[i] = new Player(playersNamesAndKeys[i*2].getText(), PApplet.parseInt(playersNamesAndKeys[i*2+1].getText().charAt(0)));
     }
     correspondingBtn = new int[numberOfPlayers];
     for(int i = 0; i < numberOfPlayers; ++i)
@@ -601,72 +731,81 @@ class Button extends GUIElement{
   
   
 }
-class CheckBox extends GUIElement{
-  
+class CheckBox extends GUIElement {
+
   int checkedColor = color(0, 255, 0);
   boolean isChecked = false;
-  
-  public CheckBox(String name){
+  String textPosition = "right";
+
+  public CheckBox(String name) {
     super(name);
   }
-  
-  
-  public void setCheckedColor(int c){
+
+
+  public void setCheckedColor(int c) {
     checkedColor = c;
   }
 
-  public void setChecked(){
-    if(isChecked)
+  public void setChecked() {
+    if (isChecked)
       isChecked = false;
     else
       isChecked = true;
   }
-  
-  public boolean isChecked(){
+
+  public boolean isChecked() {
     return isChecked;
   }
-  
-  public void show(){
-    if(isVisible){
-      if(isChecked)
+
+  public void show() {
+    if (isVisible) {
+      if (isChecked) {
         fill(checkedColor);
-      else
+        rect(x, y, width, height);
+        line(x, y, x + width, y + height);
+        line(x + width, y, x, y + height);
+      }
+      else {
         fill(backgroundColor);
-      rect(x, y, width, height);
+        rect(x, y, width, height);
+      }
       fill(fontColor);
-      textAlign(LEFT, CENTER);
       textFont(textFont, fontSize);
-      text(text, x + width + 20, y + height/2);
+      if (textPosition.equals("down")) {
+        textAlign(CENTER, CENTER);
+        text(text, x + 20, y + height + 40);
+      } else {
+        textAlign(LEFT, CENTER);
+        text(text, x + width + 20, y + height/2);
+      }
     }
   }
-  
-  
-  public CheckBox setSize(float width, float height){
+
+
+  public CheckBox setSize(float width, float height) {
     super.setSize(width, height);
     return this;
   }
-  
-  public CheckBox setPosition(float x, float y){
+
+  public CheckBox setPosition(float x, float y) {
     super.setPosition(x, y);
     return this;
   }
-  
-  public CheckBox setImage(PImage image){
+
+  public CheckBox setImage(PImage image) {
     super.setImage(image);
     return this;
   }
-  
-  public CheckBox setVisible(boolean visible){
+
+  public CheckBox setVisible(boolean visible) {
     super.setVisible(visible);
     return this;
   }
-  
-  public CheckBox setText(String text){
+
+  public CheckBox setText(String text) {
     super.setText(text);
     return this;
   }
-  
-  
 }
 class Colors
 {
